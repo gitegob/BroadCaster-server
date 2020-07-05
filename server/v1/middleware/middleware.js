@@ -17,11 +17,6 @@ class Middleware {
     });
     Helpers.checkJoiError(error, res, next);
   }
-  static validateSecret(req, res, next) {
-    const { secret } = req.body;
-    if (secret === process.env.react_secret) next();
-    else Helpers.sendError(res, 401, 'Unauthorized');
-  }
   static checkSignup(req, res, next) {
     if (users.find((el) => el.email === req.body.email)) {
       Helpers.sendError(res, 409, 'Email already exists');

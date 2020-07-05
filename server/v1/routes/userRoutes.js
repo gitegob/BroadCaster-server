@@ -7,7 +7,7 @@ const router = Router();
 
 router.post('/signup', Middleware.validateSignup, Middleware.checkSignup, UserController.signup);
 router.post('/login', Middleware.validateLogin, Middleware.checkLogin, UserController.signin);
-router.post('/secret123', Middleware.auth, Middleware.validateSecret, UserController.findUser);
+router.get('/profile', Middleware.auth, UserController.getProfile);
 router.post('/error', serverError);
 
 export default router;

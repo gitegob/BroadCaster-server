@@ -19,8 +19,8 @@ class UserController {
     });
     users.push(newUser);
   }
-  static findUser = (req, res) => {
-    Helpers.sendSuccess(res, 200, 'Data retrieved successfully', { userData: req.payload });
+  static getProfile = (req, res) => {
+    Helpers.sendSuccess(res, 200, 'Profile retrieved successfully', { userData: req.payload });
   };
   static signin(req, res) {
     const { email } = req.body;
