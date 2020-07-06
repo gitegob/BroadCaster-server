@@ -3,14 +3,12 @@ import { users } from '../data/data';
 import Helpers from '../helpers/helpers';
 
 class UserModel {
-  constructor(firstName, lastName, email, password, userName, phone) {
+  constructor(firstName, lastName, email, password) {
     this.id = Helpers.setId(users);
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;
     this.password = bcrypt.hashSync(password, 10);
-    this.userName = userName;
-    this.phone = phone;
     this.isAdmin = false;
   }
 }

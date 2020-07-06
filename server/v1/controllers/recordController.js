@@ -5,7 +5,7 @@ import Helpers from '../helpers/helpers';
 class RecordController {
   static async createRecord(req, res) {
     const { id, firstName, lastName } = req.payload;
-    const { title, type, location, comment } = req.body;
+    const { title, type, description, location } = req.body;
     let mediaArr;
     if (req.files) {
       mediaArr = await Helpers.uploadFile(req);
@@ -16,9 +16,9 @@ class RecordController {
       lastName,
       title.replace(/\s+/, ' ').trim(),
       type,
+      description.replace(/\s+/, ' ').trim(),
       location,
       mediaArr,
-      comment.replace(/\s+/, ' ').trim(),
     );
     records.push(newRecord);
     Helpers.sendSuccess(res, 201, 'Record created successfully', { record: newRecord });

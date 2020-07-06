@@ -6,14 +6,12 @@ import { users } from '../data/data';
 
 class Middleware {
   static validateSignup(req, res, next) {
-    const { firstName, lastName, email, password, userName, phone } = req.body;
+    const { firstName, lastName, email, password } = req.body;
     const { error } = schema.signupSchema.validate({
       firstName,
       lastName,
       email,
       password,
-      userName,
-      phone,
     });
     Helpers.checkJoiError(error, res, next);
   }
@@ -71,12 +69,14 @@ class Middleware {
   }
 
   static validateRecord(req, res, next) {
-    const { title, type, location, comment } = req.body;
+    const { district, sector, cell } = req.body;
+    req.body.location = { district, sector, cell };
+    const { title, type, description, location } = req.body;
     const { error } = schema.recordSchema.validate({
       title,
       type,
+      description,
       location,
-      comment,
     });
     if (req.method === 'PATCH') {
       if (

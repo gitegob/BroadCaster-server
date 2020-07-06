@@ -5,14 +5,12 @@ import User from '../models/userModel';
 
 class UserController {
   static signup(req, res) {
-    const { firstName, lastName, email, password, userName, phone } = req.body;
+    const { firstName, lastName, email, password } = req.body;
     const newUser = new User(
       firstName.replace(/\s+/, ' ').trim(),
       lastName.replace(/\s+/, ' ').trim(),
       email,
       password,
-      userName,
-      phone,
     );
     Helpers.sendSuccess(res, 201, 'User created successfully', {
       token: Helpers.genToken(newUser),
