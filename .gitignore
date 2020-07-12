@@ -1,6 +1,0 @@
-.vscode
-node_modules
-.env
-.coveralls.yml
-.nyc_output
-coverage
