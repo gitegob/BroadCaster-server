@@ -5,22 +5,20 @@ import User from '../models/userModel';
 
 class UserController {
   static signup(req, res) {
-    const { firstName, lastName, email, password, userName, phone } = req.body;
+    const { firstName, lastName, email, password } = req.body;
     const newUser = new User(
       firstName.replace(/\s+/, ' ').trim(),
       lastName.replace(/\s+/, ' ').trim(),
       email,
       password,
-      userName,
-      phone,
     );
     Helpers.sendSuccess(res, 201, 'User created successfully', {
       token: Helpers.genToken(newUser),
     });
     users.push(newUser);
   }
-  static findUser = (req, res) => {
-    Helpers.sendSuccess(res, 200, 'Data retrieved successfully', { userData: req.payload });
+  static getProfile = (req, res) => {
+    Helpers.sendSuccess(res, 200, 'Profile retrieved successfully', { userData: req.payload });
   };
   static signin(req, res) {
     const { email } = req.body;

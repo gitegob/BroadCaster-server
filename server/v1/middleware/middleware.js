@@ -6,21 +6,14 @@ import { users } from '../data/data';
 
 class Middleware {
   static validateSignup(req, res, next) {
-    const { firstName, lastName, email, password, userName, phone } = req.body;
+    const { firstName, lastName, email, password } = req.body;
     const { error } = schema.signupSchema.validate({
       firstName,
       lastName,
       email,
       password,
-      userName,
-      phone,
     });
     Helpers.checkJoiError(error, res, next);
-  }
-  static validateSecret(req, res, next) {
-    const { secret } = req.body;
-    if (secret === process.env.react_secret) next();
-    else Helpers.sendError(res, 401, 'Unauthorized');
   }
   static checkSignup(req, res, next) {
     if (users.find((el) => el.email === req.body.email)) {
@@ -76,12 +69,14 @@ class Middleware {
   }
 
   static validateRecord(req, res, next) {
-    const { title, type, location, comment } = req.body;
+    const { title, type, description, district, sector, cell } = req.body;
     const { error } = schema.recordSchema.validate({
       title,
       type,
-      location,
-      comment,
+      description,
+      district, 
+      sector,
+      cell,
     });
     if (req.method === 'PATCH') {
       if (
