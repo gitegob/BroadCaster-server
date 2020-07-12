@@ -69,14 +69,14 @@ class Middleware {
   }
 
   static validateRecord(req, res, next) {
-    const { district, sector, cell } = req.body;
-    req.body.location = { district, sector, cell };
-    const { title, type, description, location } = req.body;
+    const { title, type, description, district, sector, cell } = req.body;
     const { error } = schema.recordSchema.validate({
       title,
       type,
       description,
-      location,
+      district, 
+      sector,
+      cell,
     });
     if (req.method === 'PATCH') {
       if (
