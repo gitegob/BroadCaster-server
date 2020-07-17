@@ -36,6 +36,7 @@ class Helpers {
         isAdmin,
       },
       process.env.JWT_KEY,
+      { expiresIn: '5h'}
     );
   }
 

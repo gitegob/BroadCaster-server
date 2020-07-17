@@ -56,7 +56,7 @@ class RecordController {
   }
 
   static updateARecord(req, res) {
-    const { title, type, district,sector,cell, comment } = req.body;
+    const { title, type, district,sector,cell, description } = req.body;
     const record = Helpers.findUserRecord(req.params.recordID, req.payload.id);
     if (record) {
       if (record.status === 'pending') {
@@ -65,7 +65,7 @@ class RecordController {
         record.district = district || record.district;
         record.sector = sector || record.sector;
         record.cell = cell || record.cell;
-        record.comment = comment.replace(/\s+/, ' ').trim() || record.comment;
+        record.description = description.replace(/\s+/, ' ').trim() || record.description;
         Helpers.sendSuccess(res, 200, 'Record edited successfully', { record });
       } else Helpers.sendError(res, 403, 'Record cannot be edited');
     } else Helpers.sendError(res, 404, 'Record not found');
