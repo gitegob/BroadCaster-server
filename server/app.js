@@ -33,6 +33,7 @@ app.use('/*', (_req, res) => {
 });
 
 app.use((error, _req, res, _next) => {
+  console.log('error', error)
   Helpers.sendError(res, error.status || 500, `SERVER DOWN!: ${error.message}`);
 });
 

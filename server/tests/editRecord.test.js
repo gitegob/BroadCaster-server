@@ -76,10 +76,10 @@ describe('Editing a record', () => {
           'authorName',
           'title',
           'type',
-          'location',
+          'district','sector','cell',
           'status',
           'media',
-          'comment',
+          'description',
         ]);
         done();
       });
