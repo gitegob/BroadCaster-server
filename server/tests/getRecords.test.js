@@ -1,10 +1,12 @@
+/* eslint-disable no-unused-vars */
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import { config } from 'dotenv';
+import {
+  describe, before, after, it,
+} from 'mocha';
 import app from '../app';
-import mockData from './mockData';
-import { users, records } from '../v1/data/data';
-import Admin from '../v1/models/adminModel';
+import { mockData, clearRecords, clearUsers } from './utils';
 
 config();
 
@@ -32,11 +34,14 @@ describe('Fetching records', () => {
         done();
       });
   });
-  before('Create the admin', (done) => {
-    const { firstName, lastName, email, password, userName, phone } = mockData.admin;
-    const admin = new Admin(firstName, lastName, email, password, userName, phone);
-    users.push(admin);
-    done();
+  before('create the admin', (done) => {
+    chai
+      .request(app)
+      .post('/api/v1/auth/make-admin')
+      .send({ password: process.env.A_PASSWORD })
+      .end((_err, _res) => {
+        done();
+      });
   });
   before('Log in the admin', (done) => {
     chai
@@ -52,7 +57,7 @@ describe('Fetching records', () => {
     chai
       .request(app)
       .post('/api/v1/records')
-      .set('token', mockData.benToken)
+      .set('Authorization', `Bearer ${mockData.benToken}`)
       .send(mockData.newIntRecord)
       .end((err, res) => {
         mockData.recordId1 = res.body.data.record.id;
@@ -63,7 +68,7 @@ describe('Fetching records', () => {
     chai
       .request(app)
       .post('/api/v1/records')
-      .set('token', mockData.benToken)
+      .set('Authorization', `Bearer ${mockData.benToken}`)
       .send(mockData.newRedRecord)
       .end((err, res) => {
         done();
@@ -73,26 +78,24 @@ describe('Fetching records', () => {
     chai
       .request(app)
       .post('/api/v1/records')
-      .set('token', mockData.bruceToken)
+      .set('Authorization', `Bearer ${mockData.bruceToken}`)
       .send(mockData.newRedRecord)
-      .end((err, res) => {
+      .end((_err, res) => {
         mockData.recordId2 = res.body.data.record.id;
         done();
       });
   });
-  after('delete users', (done) => {
-    users.length = 0;
-    done();
+  after('delete users', async () => {
+    await clearUsers();
   });
-  after('delete records', (done) => {
-    records.length = 0;
-    done();
+  after('delete records', async () => {
+    await clearRecords();
   });
   it('should fetch all records by a user', (done) => {
     chai
       .request(app)
       .get('/api/v1/records')
-      .set('token', mockData.benToken)
+      .set('Authorization', `Bearer ${mockData.benToken}`)
       .end((err, res) => {
         res.should.have.status(200);
         res.should.have.property('body');
@@ -108,7 +111,39 @@ describe('Fetching records', () => {
     chai
       .request(app)
       .get('/api/v1/records')
-      .set('token', mockData.adminToken)
+      .set('Authorization', `Bearer ${mockData.adminToken}`)
+      .end((err, res) => {
+        res.should.have.status(200);
+        res.should.have.property('body');
+        res.body.should.have.property('status').eql(200);
+        res.body.should.have.property('message').eql('Records fetched successfully');
+        res.body.should.have.property('data');
+        res.body.data.should.have.property('records');
+        res.body.data.records.should.be.a('Array');
+        done();
+      });
+  });
+  it('Admin should fetch all red-flag records by all users', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/records/red-flags')
+      .set('Authorization', `Bearer ${mockData.adminToken}`)
+      .end((err, res) => {
+        res.should.have.status(200);
+        res.should.have.property('body');
+        res.body.should.have.property('status').eql(200);
+        res.body.should.have.property('message').eql('Records fetched successfully');
+        res.body.should.have.property('data');
+        res.body.data.should.have.property('records');
+        res.body.data.records.should.be.a('Array');
+        done();
+      });
+  });
+  it('Admin should fetch all intervention records by all users', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/records/interventions')
+      .set('Authorization', `Bearer ${mockData.adminToken}`)
       .end((err, res) => {
         res.should.have.status(200);
         res.should.have.property('body');
@@ -124,7 +159,7 @@ describe('Fetching records', () => {
     chai
       .request(app)
       .get('/api/v1/records/red-flags')
-      .set('token', mockData.benToken)
+      .set('Authorization', `Bearer ${mockData.benToken}`)
       .end((err, res) => {
         res.should.have.status(200);
         res.should.have.property('body');
@@ -140,7 +175,7 @@ describe('Fetching records', () => {
     chai
       .request(app)
       .get('/api/v1/records/interventions')
-      .set('token', mockData.benToken)
+      .set('Authorization', `Bearer ${mockData.benToken}`)
       .end((err, res) => {
         res.should.have.status(200);
         res.should.have.property('body');
@@ -156,7 +191,7 @@ describe('Fetching records', () => {
     chai
       .request(app)
       .get(`/api/v1/records/${mockData.recordId1}`)
-      .set('token', mockData.benToken)
+      .set('Authorization', `Bearer ${mockData.benToken}`)
       .end((err, res) => {
         res.should.have.status(200);
         res.should.have.property('body');
@@ -172,7 +207,7 @@ describe('Fetching records', () => {
     chai
       .request(app)
       .get(`/api/v1/records/${mockData.recordId1}`)
-      .set('token', mockData.adminToken)
+      .set('Authorization', `Bearer ${mockData.adminToken}`)
       .end((err, res) => {
         res.should.have.status(200);
         res.should.have.property('body');
@@ -188,7 +223,7 @@ describe('Fetching records', () => {
     chai
       .request(app)
       .get(`/api/v1/records/${mockData.recordId2}`)
-      .set('token', mockData.benToken)
+      .set('Authorization', `Bearer ${mockData.benToken}`)
       .end((err, res) => {
         res.should.have.status(404);
         res.should.have.property('body');
@@ -201,7 +236,7 @@ describe('Fetching records', () => {
     chai
       .request(app)
       .get('/api/v1/records/2344657')
-      .set('token', mockData.benToken)
+      .set('Authorization', `Bearer ${mockData.benToken}`)
       .end((err, res) => {
         res.should.have.status(400);
         res.should.have.property('body');
