@@ -1,13 +1,15 @@
+/* eslint-disable no-console */
+import 'colors';
 import express from 'express';
 import { json, urlencoded } from 'body-parser';
 import { config } from 'dotenv';
 import cors from 'cors';
 import morgan from 'morgan';
-import Helpers from './v1/helpers/helpers';
-import userRoutes from './v1/routes/userRoutes';
-import recordRoutes from './v1/routes/recordRoutes';
-import Admin from './v1/models/adminModel';
-import { users } from './v1/data/data';
+import { sendSuccess, sendError } from './helpers/senders';
+import userRoutes from './routes/userRoutes';
+import recordRoutes from './routes/recordRoutes';
+// eslint-disable-next-line no-unused-vars
+import { db } from './db/dbConfig';
 
 config();
 
@@ -23,25 +25,23 @@ app.use(
 );
 app.use(morgan('dev'));
 app.get('/', (_req, res) => {
-  Helpers.sendSuccess(res, 200, `Welcome to BroadCaster ${process.env.NODE_ENV} mode`);
+  sendSuccess(res, 200, `Welcome to BroadCaster ${process.env.NODE_ENV} mode`);
 });
 
 app.use('/api/v1/auth', userRoutes);
 app.use('/api/v1/records', recordRoutes);
 app.use('/*', (_req, res) => {
-  Helpers.sendError(res, 404, 'Not Found');
+  sendError(res, 404, 'Not Found');
 });
 
-app.use((error, _req, res, _next) => {
-  console.log('error', error)
-  Helpers.sendError(res, error.status || 500, `SERVER DOWN!: ${error.message}`);
+// eslint-disable-next-line no-unused-vars
+app.use((error, req, res, next) => {
+  console.log('error => ', error.message);
+  sendError(res, error.status || 500, `SERVER DOWN!: ${error.message}`);
 });
 
 app.listen(port, () => {
-  const { A_FNAME, A_LNAME, A_EMAIL, A_PASSWORD } = process.env;
-  const admin = new Admin(A_FNAME, A_LNAME, A_EMAIL, A_PASSWORD);
-  users.push(admin);
-  process.stdout.write(`\nConnected on ${port}\n`);
+  console.log(`Server running on ${port}...`.cyan.bold);
 });
 
 export default app;

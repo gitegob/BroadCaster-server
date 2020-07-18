@@ -24,12 +24,16 @@ const schema = {
       .required(),
   }),
   recordSchema: Joi.object({
-    title: Joi.string().min(5).max(50).trim().required(),
+    title: Joi.string().min(5).max(50).trim()
+      .required(),
     type: Joi.valid('red-flag', 'intervention').required(),
     description: Joi.string().min(20).trim().required(),
-    district: Joi.string().min(5).max(30).trim().required(),
-    sector: Joi.string().min(5).max(30).trim().required(),
-    cell: Joi.string().min(5).max(50).trim().required(),
+    district: Joi.string().min(3).max(30).trim()
+      .required(),
+    sector: Joi.string().min(3).max(30).trim()
+      .required(),
+    cell: Joi.string().min(3).max(50).trim()
+      .required(),
   }),
   statusSchema: Joi.object({
     status: Joi.valid('pending', 'under investigation', 'resolved', 'rejected').required(),

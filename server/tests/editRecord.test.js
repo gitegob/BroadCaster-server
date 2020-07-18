@@ -2,7 +2,6 @@ import chai from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../app';
 import mockData from './mockData';
-import { users, records } from '../v1/data/data';
 import Admin from '../v1/models/adminModel';
 
 chai.use(chaiHttp);
@@ -20,7 +19,9 @@ describe('Editing a record', () => {
       });
   });
   before('Create the admin', (done) => {
-    const { firstName, lastName, email, password, userName, phone } = mockData.admin;
+    const {
+      firstName, lastName, email, password, userName, phone,
+    } = mockData.admin;
     const admin = new Admin(firstName, lastName, email, password, userName, phone);
     users.push(admin);
     done();
@@ -76,7 +77,7 @@ describe('Editing a record', () => {
           'authorName',
           'title',
           'type',
-          'district','sector','cell',
+          'district', 'sector', 'cell',
           'status',
           'media',
           'description',

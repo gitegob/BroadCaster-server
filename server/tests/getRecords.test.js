@@ -1,10 +1,11 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import { config } from 'dotenv';
+import {
+  describe, before, after, it,
+} from 'mocha';
 import app from '../app';
-import mockData from './mockData';
-import { users, records } from '../v1/data/data';
-import Admin from '../v1/models/adminModel';
+import { mockData, clearRecords, clearUsers } from './utils';
 
 config();
 
@@ -33,7 +34,9 @@ describe('Fetching records', () => {
       });
   });
   before('Create the admin', (done) => {
-    const { firstName, lastName, email, password, userName, phone } = mockData.admin;
+    const {
+      firstName, lastName, email, password, userName, phone,
+    } = mockData.admin;
     const admin = new Admin(firstName, lastName, email, password, userName, phone);
     users.push(admin);
     done();

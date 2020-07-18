@@ -1,9 +1,11 @@
+/* eslint-disable no-unused-vars */
 import chai from 'chai';
 import chaiHttp from 'chai-http';
+import {
+  before, describe, after, it,
+} from 'mocha';
 import app from '../app';
-import mockData from './mockData';
-import { users } from '../v1/data/data';
-import UserController from '../v1/controllers/userController';
+import { mockData, clearUsers } from './utils';
 
 chai.use(chaiHttp);
 chai.should();
@@ -14,14 +16,21 @@ describe('Login tests', () => {
       .request(app)
       .post('/api/v1/auth/signup')
       .send(mockData.benSignup)
-      .end((_err, res) => {
+      .end((_err, _res) => {
         done();
       });
   });
-
-  after('delete a user', (done) => {
-    users.splice(users.indexOf(users.find((el) => el.email === mockData.benSignup.email)), 1);
-    done();
+  before('create an admin', (done) => {
+    chai
+      .request(app)
+      .post('/api/v1/auth/make-admin')
+      .send({ password: process.env.A_PASSWORD })
+      .end((_err, _res) => {
+        done();
+      });
+  });
+  after('delete users', async () => {
+    await clearUsers();
   });
   it('should log in a user', (done) => {
     chai
@@ -32,6 +41,20 @@ describe('Login tests', () => {
         res.should.have.status(200);
         res.body.should.have.property('status').eql(200);
         res.body.should.have.property('message').eql('User logged in successfully');
+        res.body.should.have.property('data');
+        res.body.data.should.have.property('token');
+        done();
+      });
+  });
+  it('should log in the admin', (done) => {
+    chai
+      .request(app)
+      .post('/api/v1/auth/login')
+      .send(mockData.adminLogin)
+      .end((_err, res) => {
+        res.should.have.status(200);
+        res.body.should.have.property('status').eql(200);
+        res.body.should.have.property('message').eql('Admin logged in successfully');
         res.body.should.have.property('data');
         res.body.data.should.have.property('token');
         done();

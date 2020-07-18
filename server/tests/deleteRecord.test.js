@@ -2,7 +2,6 @@ import chai from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../app';
 import mockData from './mockData';
-import { users, records } from '../v1/data/data';
 
 chai.use(chaiHttp);
 chai.should();

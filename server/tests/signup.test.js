@@ -1,16 +1,15 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
+import { after, describe, it } from 'mocha';
 import app from '../app';
-import mockData from './mockData';
-import { users } from '../v1/data/data';
+import { mockData, clearUsers } from './utils';
 
 chai.use(chaiHttp);
 chai.should();
 
 describe('Signup tests', () => {
-  after('delete users', (done) => {
-    users.length = 0;
-    done();
+  after('delete users', async () => {
+    await clearUsers();
   });
   it('should signup a user', (done) => {
     chai
@@ -35,12 +34,6 @@ describe('Signup tests', () => {
       .send(mockData.bruceSignup)
       .end((_err, res) => {
         res.should.have.status(201);
-        res.body.should.have.property('status').eql(201);
-        res.body.should.have
-          .property('message')
-          .eql('User created successfully');
-        res.body.should.have.property('data');
-        res.body.data.should.have.property('token');
         done();
       });
   });
@@ -56,7 +49,7 @@ describe('Signup tests', () => {
         done();
       });
   });
-  it('should not signup an a user with bad info', (done) => {
+  it('should not signup a user with bad info', (done) => {
     chai
       .request(app)
       .post('/api/v1/auth/signup')

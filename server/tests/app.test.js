@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../app';
@@ -13,7 +14,7 @@ describe('App tests', () => {
       .end((_err, res) => {
         res.should.have.status(200);
         res.body.should.have.property('status').eql(200);
-        res.body.should.have.property('message').eql('Welcome to BroadCaster');
+        res.body.should.have.property('message').eql('Welcome to BroadCaster testing mode');
         done();
       });
   });
