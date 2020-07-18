@@ -20,7 +20,7 @@ describe('Login tests', () => {
         done();
       });
   });
-  before('create an admin', (done) => {
+  before('create the admin', (done) => {
     chai
       .request(app)
       .post('/api/v1/auth/make-admin')

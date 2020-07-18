@@ -29,11 +29,24 @@ describe('App tests', () => {
         done();
       });
   });
-  it('should display a server error message', (done) => {
+  it('should display a server 500 error message', (done) => {
     chai
       .request(app)
       .post('/api/v1/auth/error')
       .send({ status: 500 })
+      .end((_err, res) => {
+        res.should.have.status(500);
+        res.body.should.be.a('object');
+        res.body.should.have.property('status').eql(500);
+        res.body.should.have.property('error').eql('SERVER DOWN!: Internal server error');
+        done();
+      });
+  });
+  it('should display a server error message', (done) => {
+    chai
+      .request(app)
+      .post('/api/v1/auth/error')
+      .send({ status: null })
       .end((_err, res) => {
         res.should.have.status(500);
         res.body.should.be.a('object');

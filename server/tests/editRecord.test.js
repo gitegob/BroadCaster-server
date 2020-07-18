@@ -1,8 +1,11 @@
+/* eslint-disable no-unused-vars */
 import chai from 'chai';
 import chaiHttp from 'chai-http';
+import {
+  describe, before, after, it,
+} from 'mocha';
 import app from '../app';
-import mockData from './mockData';
-import Admin from '../v1/models/adminModel';
+import { mockData, clearUsers, clearRecords } from './utils';
 
 chai.use(chaiHttp);
 chai.should();
@@ -18,20 +21,21 @@ describe('Editing a record', () => {
         done();
       });
   });
-  before('Create the admin', (done) => {
-    const {
-      firstName, lastName, email, password, userName, phone,
-    } = mockData.admin;
-    const admin = new Admin(firstName, lastName, email, password, userName, phone);
-    users.push(admin);
-    done();
+  before('create the admin', (done) => {
+    chai
+      .request(app)
+      .post('/api/v1/auth/make-admin')
+      .send({ password: process.env.A_PASSWORD })
+      .end((_err, _res) => {
+        done();
+      });
   });
   before('Log in the admin', (done) => {
     chai
       .request(app)
       .post('/api/v1/auth/login')
       .send(mockData.adminLogin)
-      .end((err, res) => {
+      .end((_err, res) => {
         mockData.adminToken = res.body.data.token;
         done();
       });
@@ -40,28 +44,25 @@ describe('Editing a record', () => {
     chai
       .request(app)
       .post('/api/v1/records')
-      .set('token', mockData.benToken)
+      .set('Authorization', `Bearer ${mockData.benToken}`)
       .send(mockData.newIntRecord)
       .end((err, res) => {
         mockData.recordId = res.body.data.record.id;
         done();
       });
   });
-  after('delete users', (done) => {
-    users.length = 0;
-    done();
+  after('delete users', async () => {
+    await clearUsers();
   });
-  after('delete records', (done) => {
-    records.length = 0;
-
-    done();
+  after('delete records', async () => {
+    await clearRecords();
   });
 
-  it('user should edit their record', (done) => {
+  it('should edit their record', (done) => {
     chai
       .request(app)
       .patch(`/api/v1/records/${mockData.recordId}`)
-      .set('token', mockData.benToken)
+      .set('Authorization', `Bearer ${mockData.benToken}`)
       .send(mockData.newRecordEdited)
       .end((err, res) => {
         res.should.have.status(200);
@@ -77,19 +78,65 @@ describe('Editing a record', () => {
           'authorName',
           'title',
           'type',
-          'district', 'sector', 'cell',
+          'district',
+          'sector',
+          'cell',
           'status',
-          'media',
           'description',
+          'updatedOn',
         ]);
         done();
       });
   });
-  it('user should not edit a non-existent record', (done) => {
+  it('should edit their record with no change', (done) => {
+    chai
+      .request(app)
+      .patch(`/api/v1/records/${mockData.recordId}`)
+      .set('Authorization', `Bearer ${mockData.benToken}`)
+      .send(mockData.newRecordEditedNoChange)
+      .end((err, res) => {
+        res.should.have.status(200);
+        res.should.have.property('body');
+        res.body.should.have.property('status').eql(200);
+        res.body.should.have.property('message').eql('Record edited successfully');
+        res.body.should.have.property('data');
+        res.body.data.should.have.property('record');
+        res.body.data.record.should.have.all.keys([
+          'id',
+          'createdOn',
+          'authorId',
+          'authorName',
+          'title',
+          'type',
+          'district',
+          'sector',
+          'cell',
+          'status',
+          'description',
+          'updatedOn',
+        ]);
+        done();
+      });
+  });
+  it('should not edit a record with invalid entries', (done) => {
+    chai
+      .request(app)
+      .patch(`/api/v1/records/${mockData.recordId}`)
+      .set('Authorization', `Bearer ${mockData.benToken}`)
+      .send(mockData.newRecordEditedWrong)
+      .end((err, res) => {
+        res.should.have.status(400);
+        res.should.have.property('body');
+        res.body.should.have.property('status').eql(400);
+        res.body.should.have.property('error').eql('type must be one of [red-flag, intervention]');
+        done();
+      });
+  });
+  it('should not edit a non-existent record', (done) => {
     chai
       .request(app)
       .patch('/api/v1/records/12')
-      .set('token', mockData.benToken)
+      .set('Authorization', `Bearer ${mockData.benToken}`)
       .send(mockData.newRecordEdited)
       .end((err, res) => {
         res.should.have.status(404);
@@ -103,23 +150,23 @@ describe('Editing a record', () => {
     chai
       .request(app)
       .patch(`/api/v1/records/${mockData.recordId}/status`)
-      .set('token', mockData.adminToken)
-      .send({ status: 'under investigation' })
+      .set('Authorization', `Bearer ${mockData.adminToken}`)
+      .send({ status: 'resolved' })
       .end((err, res) => {
         res.should.have.status(200);
         res.should.have.property('body');
         res.body.should.have.property('status').eql(200);
         res.body.should.have.property('message').eql('Record status updated successfully');
         res.body.should.have.property('data');
-        res.body.data.should.have.property('status').eql('under investigation');
+        res.body.data.should.have.property('status').eql('resolved');
         done();
       });
   });
-  it('user should not edit a record under investigation', (done) => {
+  it('should not edit a resolved record', (done) => {
     chai
       .request(app)
       .patch(`/api/v1/records/${mockData.recordId}`)
-      .set('token', mockData.benToken)
+      .set('Authorization', `Bearer ${mockData.benToken}`)
       .send(mockData.newRecordEdited)
       .end((err, res) => {
         res.should.have.status(403);
@@ -133,8 +180,8 @@ describe('Editing a record', () => {
     chai
       .request(app)
       .patch(`/api/v1/records/${mockData.recordId}/status`)
-      .set('token', mockData.benToken)
-      .send({ status: 'under investigation' })
+      .set('Authorization', `Bearer ${mockData.benToken}`)
+      .send({ status: 'resolved' })
       .end((err, res) => {
         res.should.have.status(403);
         res.should.have.property('body');

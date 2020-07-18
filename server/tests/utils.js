@@ -67,7 +67,15 @@ export const mockData = {
     district: 'Kicukiro',
     sector: 'Niboye',
     cell: 'Gatare',
-    description: 'There is   corruption in my neighborhood and it has got to stop',
+    description: 'There is corruption in my neighborhood and it has got to stop',
+  },
+  newRecordEditedNoChange: {
+    title: '',
+    type: '',
+    district: '',
+    sector: '',
+    cell: '',
+    description: '',
   },
   newRecordEditedWrong: {
     title: 'Corruption somewhere edited',

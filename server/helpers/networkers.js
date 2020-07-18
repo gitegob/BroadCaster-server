@@ -1,7 +1,6 @@
 import sgMail from '../config/mailerConfig';
-import upload from '../config/cloudConfig';
 
-export const sendEmail = async (to, name, title, status) => {
+const sendEmail = async (to, name, title, status) => {
   const msg = {
     to,
     from: '"BroadCaster" <noreply@broadcaster.com>',
@@ -12,19 +11,4 @@ export const sendEmail = async (to, name, title, status) => {
   };
   await sgMail.send(msg);
 };
-
-export const uploadFile = async (req) => {
-  const mediaArr = [];
-  const { media } = req.files;
-  let cloudFile;
-  if (Array.isArray(media)) {
-    media.map(async (el) => {
-      cloudFile = await upload(el);
-      mediaArr.push(cloudFile.url);
-    });
-  } else {
-    cloudFile = await upload(media);
-    mediaArr.push(cloudFile.url);
-  }
-  return mediaArr;
-};
+export default sendEmail;

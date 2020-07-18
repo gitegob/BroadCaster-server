@@ -24,7 +24,5 @@ export const auth = async (req, res, next) => {
 
 export const adminAuth = (req, res, next) => {
   if (req.payload.isAdmin) next();
-  else {
-    sendError(res, 403, 'This request requires Administrator privileges');
-  }
+  else return sendError(res, 403, 'This request requires Administrator privileges');
 };

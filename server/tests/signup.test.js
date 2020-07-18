@@ -11,6 +11,42 @@ describe('Signup tests', () => {
   after('delete users', async () => {
     await clearUsers();
   });
+  it('should create an admin', (done) => {
+    chai
+      .request(app)
+      .post('/api/v1/auth/make-admin')
+      .send({ password: process.env.A_PASSWORD })
+      .end((_err, res) => {
+        res.should.have.status(201);
+        res.body.should.have.property('status').eql(201);
+        res.body.should.have.property('message').eql('Admin created successfully');
+        done();
+      });
+  });
+  it('should not create an admin when he already exists', (done) => {
+    chai
+      .request(app)
+      .post('/api/v1/auth/make-admin')
+      .send({ password: process.env.A_PASSWORD })
+      .end((_err, res) => {
+        res.should.have.status(409);
+        res.body.should.have.property('status').eql(409);
+        res.body.should.have.property('error').eql(`Admin already exists:${process.env.A_EMAIL}`);
+        done();
+      });
+  });
+  it('should not create an admin without necessary credentials', (done) => {
+    chai
+      .request(app)
+      .post('/api/v1/auth/make-admin')
+      .send({ password: 'aWrongPassword' })
+      .end((_err, res) => {
+        res.should.have.status(403);
+        res.body.should.have.property('status').eql(403);
+        res.body.should.have.property('error').eql('Forbidden');
+        done();
+      });
+  });
   it('should signup a user', (done) => {
     chai
       .request(app)
@@ -19,11 +55,24 @@ describe('Signup tests', () => {
       .end((_err, res) => {
         res.should.have.status(201);
         res.body.should.have.property('status').eql(201);
-        res.body.should.have
-          .property('message')
-          .eql('User created successfully');
+        res.body.should.have.property('message').eql('User created successfully');
         res.body.should.have.property('data');
         res.body.data.should.have.property('token');
+        mockData.benToken = res.body.data.token;
+        done();
+      });
+  });
+  it('should retrieve a user\'s profile', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/auth/profile')
+      .set('Authorization', `Bearer ${mockData.benToken}`)
+      .end((_err, res) => {
+        res.should.have.status(200);
+        res.body.should.have.property('status').eql(200);
+        res.body.should.have.property('message').eql('Profile retrieved successfully');
+        res.body.should.have.property('data');
+        res.body.data.should.have.property('userData');
         done();
       });
   });

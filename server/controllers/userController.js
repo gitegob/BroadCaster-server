@@ -39,7 +39,7 @@ export const makeAdmin = async (req, res) => {
         A_FNAME, A_LNAME, A_EMAIL, A_PASSWORD,
       } = process.env;
       await queryDB(res, 'insert into users ("firstName", "lastName", "email", "password", "isAdmin") values ($1,$2,$3,$4,$5)', [A_FNAME, A_LNAME, A_EMAIL, bcrypt.hashSync(A_PASSWORD, 10), true]);
-      sendSuccess(res, 201, 'Admin successfully created');
+      sendSuccess(res, 201, 'Admin created successfully');
     }
-  } else sendError(res, 403, 'Unauthorized');
+  } else sendError(res, 403, 'Forbidden');
 };

@@ -1,5 +1,4 @@
 import { queryDB } from '../db/dbConfig';
-import { sendError } from './senders';
 
 export const findRecordsByType = async (res, id, isAdmin, type) => {
   const query = isAdmin ? 'select * from records where type=$1 order by "createdOn" desc' : 'select * from records where type=$1 and "authorId"=$2 order by "createdOn" desc';
@@ -14,9 +13,9 @@ export const findRecords = async (res, id, isAdmin) => {
   return result;
 };
 export const findRecord = async (res, recordId, isAdmin, authorId) => {
-  const query = isAdmin ? 'select * from records where id=$1' : 'select * from records where id=$1 and "authorId" = $2';
+  const query = isAdmin ? 'select * from records where id=$1' : 'select * from records where id=$1 and "authorId"=$2';
   const values = isAdmin ? [recordId] : [recordId, authorId];
   const result = (await queryDB(res, query, values))[0];
-  if (!result) sendError(res, 404, 'Record not found');
-  else return result;
+  if (!result) return null;
+  return result;
 };

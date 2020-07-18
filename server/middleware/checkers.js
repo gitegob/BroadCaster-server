@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import { sendError } from '../helpers/senders';
 import { queryDB } from '../db/dbConfig';
+import { findRecord } from '../helpers/finders';
 
 export const checkSignup = async (req, res, next) => {
   const match = (await queryDB(res, 'select email from users where email=$1', [req.body.email]))[0];
@@ -16,6 +17,20 @@ export const checkLogin = async (req, res, next) => {
     const password = bcrypt.compareSync(req.body.password, user.password);
     if (!password) {
       sendError(res, 401, 'Incorrect password');
-    } else { req.user = user; next(); }
+    } else {
+      req.user = user;
+      next();
+    }
+  }
+};
+
+export const checkRecord = async (req, res, next) => {
+  const { id, isAdmin } = req.payload;
+  const { recordID } = req.params;
+  const record = await findRecord(res, recordID, isAdmin, id);
+  if (!record) sendError(res, 404, 'Record not found');
+  else {
+    req.record = record;
+    next();
   }
 };

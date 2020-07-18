@@ -6,7 +6,7 @@
   "scripts": {
     "createTables": "NODE_ENV=testing node --require babel-core/register --require babel-polyfill ./server/db/createTables.js",
     "clearTables": "NODE_ENV=testing node --require babel-core/register --require babel-polyfill ./server/db/clearTables.js",
-    "test": "NODE_ENV=testing nyc --reporter=text mocha --require babel-core/register --require babel-polyfill ./server/tests/createRecord.test.js --timeout 10000 --exit",
+    "test": "NODE_ENV=testing  nyc --reporter=text mocha --require babel-core/register --require babel-polyfill ./server/tests/*.test.js --timeout 10000 --exit",
     "start": "node --require babel-core/register --require babel-polyfill ./server/app.js",
     "server": "nodemon --require babel-core/register --require babel-polyfill ./server/app.js",
     "client": "npm start --prefix ../client",
