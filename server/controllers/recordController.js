@@ -42,12 +42,12 @@ export const updateARecord = async (req, res) => {
   } = req.body;
   const { record } = req;
   if (record.status === 'pending') {
-    const newTitle = title.replace(/\s+/, ' ').trim() || record.title;
+    const newTitle = title ? title.replace(/\s+/, ' ').trim() : record.title;
     const newType = type || record.type;
     const newDistrict = district || record.district;
     const newSector = sector || record.sector;
     const newCell = cell || record.cell;
-    const newDescription = description.replace(/\s+/, ' ').trim() || record.description;
+    const newDescription = description ? description.replace(/\s+/, ' ').trim() : record.description;
     const values = [
       newTitle, newType, newDistrict, newSector, newCell, newDescription, req.params.recordID];
     const result = (await queryDB(res, 'update records set title=$1,type=$2,district=$3, sector=$4, cell=$5, description=$6, "updatedOn"=current_timestamp WHERE id=$7 returning *', values))[0];
