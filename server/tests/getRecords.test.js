@@ -91,7 +91,7 @@ describe('Fetching records', () => {
   after('delete records', async () => {
     await clearRecords();
   });
-  it('should fetch all records by a user', (done) => {
+  it('should fetch all records by a user no pagination', (done) => {
     chai
       .request(app)
       .get('/api/v1/records')
@@ -107,7 +107,7 @@ describe('Fetching records', () => {
         done();
       });
   });
-  it('Admin should fetch all records by all users', (done) => {
+  it('Admin should fetch all records by all users no pagination', (done) => {
     chai
       .request(app)
       .get('/api/v1/records')
@@ -123,26 +123,10 @@ describe('Fetching records', () => {
         done();
       });
   });
-  it('Admin should fetch all red-flag records by all users', (done) => {
+  it('Admin should fetch all records by all users with pagination', (done) => {
     chai
       .request(app)
-      .get('/api/v1/records/red-flags')
-      .set('Authorization', `Bearer ${mockData.adminToken}`)
-      .end((err, res) => {
-        res.should.have.status(200);
-        res.should.have.property('body');
-        res.body.should.have.property('status').eql(200);
-        res.body.should.have.property('message').eql('Records fetched successfully');
-        res.body.should.have.property('data');
-        res.body.data.should.have.property('records');
-        res.body.data.records.should.be.a('Array');
-        done();
-      });
-  });
-  it('Admin should fetch all intervention records by all users', (done) => {
-    chai
-      .request(app)
-      .get('/api/v1/records/interventions')
+      .get('/api/v1/records?page=1')
       .set('Authorization', `Bearer ${mockData.adminToken}`)
       .end((err, res) => {
         res.should.have.status(200);
@@ -158,7 +142,7 @@ describe('Fetching records', () => {
   it('should fetch all red-flag records by a user', (done) => {
     chai
       .request(app)
-      .get('/api/v1/records/red-flags')
+      .get('/api/v1/records/?type=red')
       .set('Authorization', `Bearer ${mockData.benToken}`)
       .end((err, res) => {
         res.should.have.status(200);
@@ -174,7 +158,7 @@ describe('Fetching records', () => {
   it('should fetch all intervention records by a user', (done) => {
     chai
       .request(app)
-      .get('/api/v1/records/interventions')
+      .get('/api/v1/records?type=int')
       .set('Authorization', `Bearer ${mockData.benToken}`)
       .end((err, res) => {
         res.should.have.status(200);
@@ -184,6 +168,78 @@ describe('Fetching records', () => {
         res.body.should.have.property('data');
         res.body.data.should.have.property('records');
         res.body.data.records.should.be.a('Array');
+        done();
+      });
+  });
+  it('Admin should fetch all red-flag records by all users', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/records?type=red')
+      .set('Authorization', `Bearer ${mockData.adminToken}`)
+      .end((err, res) => {
+        res.should.have.status(200);
+        res.should.have.property('body');
+        res.body.should.have.property('status').eql(200);
+        res.body.should.have.property('message').eql('Records fetched successfully');
+        res.body.should.have.property('data');
+        res.body.data.should.have.property('records');
+        res.body.data.records.should.be.a('Array');
+        done();
+      });
+  });
+  it('Admin should fetch all intervention records by all users', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/records?type=int')
+      .set('Authorization', `Bearer ${mockData.adminToken}`)
+      .end((err, res) => {
+        res.should.have.status(200);
+        res.should.have.property('body');
+        res.body.should.have.property('status').eql(200);
+        res.body.should.have.property('message').eql('Records fetched successfully');
+        res.body.should.have.property('data');
+        res.body.data.should.have.property('records');
+        res.body.data.records.should.be.a('Array');
+        done();
+      });
+  });
+
+  it('should not fetch records with invalid query parameters case 1', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/records?type=something')
+      .set('Authorization', `Bearer ${mockData.benToken}`)
+      .end((err, res) => {
+        res.should.have.status(400);
+        res.should.have.property('body');
+        res.body.should.have.property('status').eql(400);
+        res.body.should.have.property('error').eql('Invalid query parameters');
+        done();
+      });
+  });
+  it('should not fetch records with invalid query parameters case 2', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/records?page=121221212')
+      .set('Authorization', `Bearer ${mockData.benToken}`)
+      .end((err, res) => {
+        res.should.have.status(400);
+        res.should.have.property('body');
+        res.body.should.have.property('status').eql(400);
+        res.body.should.have.property('error').eql('Invalid query parameters');
+        done();
+      });
+  });
+  it('should not fetch records with invalid query parameters case 3', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/records?page=pageee')
+      .set('Authorization', `Bearer ${mockData.benToken}`)
+      .end((err, res) => {
+        res.should.have.status(400);
+        res.should.have.property('body');
+        res.body.should.have.property('status').eql(400);
+        res.body.should.have.property('error').eql('Invalid query parameters');
         done();
       });
   });
@@ -200,35 +256,6 @@ describe('Fetching records', () => {
         res.body.should.have.property('data');
         res.body.data.should.have.property('record');
         res.body.data.record.should.be.a('Object');
-        done();
-      });
-  });
-  it('Admin should fetch a single record by any user', (done) => {
-    chai
-      .request(app)
-      .get(`/api/v1/records/${mockData.recordId1}`)
-      .set('Authorization', `Bearer ${mockData.adminToken}`)
-      .end((err, res) => {
-        res.should.have.status(200);
-        res.should.have.property('body');
-        res.body.should.have.property('status').eql(200);
-        res.body.should.have.property('message').eql('Record fetched successfully');
-        res.body.should.have.property('data');
-        res.body.data.should.have.property('record');
-        res.body.data.record.should.be.a('Object');
-        done();
-      });
-  });
-  it("should not fetch another user's record", (done) => {
-    chai
-      .request(app)
-      .get(`/api/v1/records/${mockData.recordId2}`)
-      .set('Authorization', `Bearer ${mockData.benToken}`)
-      .end((err, res) => {
-        res.should.have.status(404);
-        res.should.have.property('body');
-        res.body.should.have.property('status').eql(404);
-        res.body.should.have.property('error').eql('Record not found');
         done();
       });
   });

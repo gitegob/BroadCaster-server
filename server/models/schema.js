@@ -19,9 +19,7 @@ const schema = {
   }),
   loginSchema: Joi.object({
     email: Joi.string().email().required(),
-    password: Joi.string()
-      .regex(/^(?=.*[a-z.])(?=.*[A-Z])(?=.*\d)(?=.*[#$^+=!*()@%&]).{8,128}$/)
-      .required(),
+    password: Joi.string().required(),
   }),
   recordSchema: Joi.object({
     title: Joi.string().min(5).max(50).trim()

@@ -72,18 +72,6 @@ describe('Login tests', () => {
         done();
       });
   });
-  it('should not login an a user with bad info', (done) => {
-    chai
-      .request(app)
-      .post('/api/v1/auth/login')
-      .send(mockData.benLoginBad)
-      .end((_err, res) => {
-        res.should.have.status(400);
-        res.body.should.have.property('status').eql(400);
-        res.body.should.have.property('error');
-        done();
-      });
-  });
   it('should not login a user with incorrect password', (done) => {
     chai
       .request(app)
