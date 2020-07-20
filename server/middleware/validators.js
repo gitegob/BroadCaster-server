@@ -50,6 +50,17 @@ export const validateParams = (req, res, next) => {
   if (recordID && (Number.isNaN(Number(recordID)) || Number(recordID) > 10000)) return sendError(res, 400, 'Invalid parameters');
   next();
 };
+export const validateQueryParams = (req, res, next) => {
+  const { type, page } = req.query;
+
+  if (type) {
+    if (type !== 'int' && type !== 'red') return sendError(res, 400, 'Invalid query parameters');
+  }
+  if (page) {
+    if (!Number.isInteger(Number(page)) || Number(page) > 1000) return sendError(res, 400, 'Invalid query parameters');
+  }
+  next();
+};
 
 export const validateStatus = (req, res, next) => {
   const { status } = req.body;

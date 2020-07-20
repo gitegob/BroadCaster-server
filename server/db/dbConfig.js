@@ -51,6 +51,16 @@ const queryDB = async (res, query, values) => {
   }
 };
 
+const manipTables = async (queries) => {
+  try {
+    await db.query(queries);
+    process.exit(0);
+  } catch (error) {
+    console.log('error', error);
+    process.exit(0);
+  }
+};
+
 export {
-  db, createQueries, deleteQueries, clearQueries, queryDB,
+  db, createQueries, deleteQueries, clearQueries, queryDB, manipTables,
 };

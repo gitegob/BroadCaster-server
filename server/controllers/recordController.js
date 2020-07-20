@@ -1,6 +1,6 @@
 import sendEmail from '../helpers/networkers';
 import { sendSuccess, sendError } from '../helpers/senders';
-import { findRecordsByType, findRecords } from '../helpers/finders';
+import { findRecords } from '../helpers/finders';
 import { queryDB } from '../db/dbConfig';
 
 export const createRecord = async (req, res) => {
@@ -17,17 +17,7 @@ export const createRecord = async (req, res) => {
 
 export const getRecords = async (req, res) => {
   const { id, isAdmin } = req.payload;
-  const result = await findRecords(res, id, isAdmin);
-  sendSuccess(res, 200, 'Records fetched successfully', { records: result });
-};
-
-export const getRedFlags = async (req, res) => {
-  const result = await findRecordsByType(res, req.payload.id, req.payload.isAdmin, 'red-flag');
-  sendSuccess(res, 200, 'Records fetched successfully', { records: result });
-};
-
-export const getInterventions = async (req, res) => {
-  const result = await findRecordsByType(res, req.payload.id, req.payload.isAdmin, 'intervention');
+  const result = await findRecords(req, res, id, isAdmin);
   sendSuccess(res, 200, 'Records fetched successfully', { records: result });
 };
 
