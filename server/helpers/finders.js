@@ -2,14 +2,24 @@ import { queryDB } from '../db/dbConfig';
 
 export const findRecords = async (req, res, id, isAdmin) => {
   const { type, page } = req.query;
-  const p = page || 1;
+  const p = (page) || 1;
+  const offset = (p - 1) * 10;
   const queryObj = {};
-  if (isAdmin) {
-    queryObj.query = type ? 'select * from records where type=$1 order by "createdOn" desc limit $2 offset $3' : 'select * from records order by "createdOn" desc limit $1 offset $2';
-    queryObj.values = type ? [type === 'red' ? 'red-flag' : 'intervention', 10, (p - 1) * 10] : [10, (p - 1) * 10];
+  if (type) {
+    const t = (type === 'red') ? 'red-flag' : 'intervention';
+    if (isAdmin) {
+      queryObj.query = 'select * from records where type=$1 order by "createdOn" desc limit $2 offset $3';
+      queryObj.values = [t, 10, offset];
+    } else {
+      queryObj.query = 'select * from records where "authorId" = $1 and type=$2 order by "createdOn" desc limit $3 offset $4';
+      queryObj.values = [id, t, 10, offset];
+    }
+  } else if (isAdmin) {
+    queryObj.query = 'select * from records order by "createdOn" desc limit $1 offset $2';
+    queryObj.values = [10, offset];
   } else {
-    queryObj.query = type ? 'select * from records where "authorId" = $1 and type=$2 order by "createdOn" desc limit $3 offset $4' : 'select * from records where "authorId" = $1 order by "createdOn" desc limit $2 offset $3';
-    queryObj.values = type ? [id, type === 'red' ? 'red-flag' : 'intervention', 10, (p - 1) * 10] : [id, 10, (p - 1) * 10];
+    queryObj.query = 'select * from records where "authorId" = $1 order by "createdOn" desc limit $2 offset $3';
+    queryObj.values = [id, 10, offset];
   }
   const result = await queryDB(res, queryObj.query, queryObj.values);
   return result;

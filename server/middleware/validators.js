@@ -54,10 +54,13 @@ export const validateQueryParams = (req, res, next) => {
   const { type, page } = req.query;
 
   if (type) {
-    if (type !== 'int' && type !== 'red') return sendError(res, 400, 'Invalid query parameters');
+    if (type !== 'int') {
+      if (type !== 'red') return sendError(res, 400, 'Invalid query parameters');
+    }
   }
   if (page) {
-    if (!Number.isInteger(Number(page)) || Number(page) > 1000) return sendError(res, 400, 'Invalid query parameters');
+    if (!Number.isInteger(Number(page))) return sendError(res, 400, 'Invalid query parameters');
+    if (Number(page) > 1000) return sendError(res, 400, 'Invalid query parameters');
   }
   next();
 };

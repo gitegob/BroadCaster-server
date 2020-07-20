@@ -12,7 +12,7 @@ const sendEmail = async (to, name, title, status) => {
   try {
     await sgMail.send(msg);
   } catch (error) {
-    console.log(error.message);
+    return error.message;
   }
 };
 export default sendEmail;
