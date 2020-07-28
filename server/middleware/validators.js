@@ -46,8 +46,8 @@ export const validateRecord = (req, res, next) => {
 };
 
 export const validateParams = (req, res, next) => {
-  const { recordID } = req.params;
-  if (recordID && (Number.isNaN(Number(recordID)) || Number(recordID) > 10000)) return sendError(res, 400, 'Invalid parameters');
+  const { id } = req.params;
+  if (id && (Number.isNaN(Number(id)) || Number(id) > 10000)) return sendError(res, 400, 'Invalid parameters');
   next();
 };
 export const validateQueryParams = (req, res, next) => {

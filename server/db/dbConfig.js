@@ -47,19 +47,10 @@ const queryDB = async (res, query, values) => {
     const result = values.length ? await db.query(query, values) : await db.query(query);
     return result.rows;
   } catch (error) {
-    return sendError(res, 500, `DATABASE ERROR: ${error}`);
-  }
-};
-
-const manipTables = async (queries) => {
-  try {
-    await db.query(queries);
-    process.exit();
-  } catch (error) {
-    process.exit();
+    return sendError(res, 500, `DATABASE ERROR: ${error.message}`);
   }
 };
 
 export {
-  db, createQueries, deleteQueries, clearQueries, queryDB, manipTables,
+  db, createQueries, deleteQueries, clearQueries, queryDB,
 };

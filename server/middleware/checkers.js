@@ -26,7 +26,7 @@ export const checkLogin = async (req, res, next) => {
 
 export const checkRecord = async (req, res, next) => {
   const { id, isAdmin } = req.payload;
-  const { recordID } = req.params;
+  const { id: recordID } = req.params;
   const record = await findRecord(res, recordID, isAdmin, id);
   if (!record) sendError(res, 404, 'Record not found');
   else {

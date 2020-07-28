@@ -1,4 +1,4 @@
-import sendEmail from '../helpers/networkers';
+import { sendEmail } from '../helpers/networkers';
 import { sendSuccess, sendError } from '../helpers/senders';
 import { findRecords } from '../helpers/finders';
 import { queryDB } from '../db/dbConfig';
@@ -39,7 +39,7 @@ export const updateARecord = async (req, res) => {
     const newCell = cell || record.cell;
     const newDescription = description ? description.replace(/\s+/, ' ').trim() : record.description;
     const values = [
-      newTitle, newType, newDistrict, newSector, newCell, newDescription, req.params.recordID];
+      newTitle, newType, newDistrict, newSector, newCell, newDescription, req.params.id];
     const result = (await queryDB(res, 'update records set title=$1,type=$2,district=$3, sector=$4, cell=$5, description=$6, "updatedOn"=current_timestamp WHERE id=$7 returning *', values))[0];
     sendSuccess(res, 200, 'Record edited successfully', { record: result });
   } else sendError(res, 403, 'Record cannot be edited');
@@ -47,23 +47,24 @@ export const updateARecord = async (req, res) => {
 
 export const updateStatus = async (req, res) => {
   const { status } = req.body;
-  const { recordID } = req.params;
+  const { id: recordID } = req.params;
   const result = (await queryDB(res, 'update records set status=$1 where id=$2 returning *', [status, recordID]))[0];
-  sendSuccess(res, 200, 'Record status updated successfully', {
-    status: result.status,
-  });
   const {
-    authorId, title: recordTitle, status: recordStatus,
+    authorId, title: recordTitle, status: recordStatus, type: recordType,
   } = result;
   const result2 = (await queryDB(res, 'select email,"firstName" from users where id=$1', [authorId]))[0];
   const { email, firstName } = result2;
-  await sendEmail(email, firstName, recordTitle, recordStatus);
+  const error = await sendEmail(email, firstName, recordTitle, recordStatus, recordType);
+  sendSuccess(res, 200, 'Record status updated successfully', {
+    status: result.status,
+    notified: error ? 'No' : 'Yes',
+  });
 };
 
 export const deleteARecord = async (req, res) => {
   const { record } = req;
   if (record.status.toLowerCase() === 'pending') {
-    await queryDB(res, 'delete from records where id=$1', [req.params.recordID]);
+    await queryDB(res, 'delete from records where id=$1', [req.params.id]);
     sendSuccess(res, 200, 'Record deleted successfully');
   } else sendError(res, 403, 'Record cannot be deleted');
 };

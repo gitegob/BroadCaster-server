@@ -1,6 +1,11 @@
-import { createQueries, manipTables } from './dbConfig';
+import { db, createQueries } from './dbConfig';
 
 const createTables = async () => {
-  await manipTables(createQueries);
+  try {
+    await db.query(createQueries);
+    process.exit();
+  } catch (error) {
+    process.exit();
+  }
 };
 createTables();
