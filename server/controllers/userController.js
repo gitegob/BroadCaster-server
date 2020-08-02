@@ -26,11 +26,22 @@ export const logIn = (req, res) => {
     });
   }
 };
-export const getProfile = async (req, res) => {
+export const getUserData = async (req, res) => {
   const [userData] = await queryDB(res, 'select id,"firstName","lastName",email,district,sector,cell,dp,"isAdmin" from users where id=$1', [req.payload.id]);
   sendSuccess(res, 200, 'Profile retrieved successfully', { userData });
 };
-
+export const getProfile = async (req, res) => {
+  if (req.payload.isAdmin) {
+    const [userData] = await queryDB(res, 'select id,"firstName","lastName",email,district,sector,cell,dp,"isAdmin" from users where id=$1', [req.params.id]);
+    if (!userData) return res.sendStatus(404);
+    sendSuccess(res, 200, 'Profile retrieved successfully', { userData });
+  } else if (`${req.payload.id}` !== req.params.id) sendError(res, 403, 'Forbidden');
+  else {
+    const [userData] = await queryDB(res, 'select id,"firstName","lastName",email,district,sector,cell,dp,"isAdmin" from users where id=$1', [req.params.id]);
+    if (!userData) return res.sendStatus(404);
+    sendSuccess(res, 200, 'Profile retrieved successfully', { userData });
+  }
+};
 export const makeAdmin = async (req, res) => {
   const { password } = req.body;
   const result = (await queryDB(res, 'select email from users where "isAdmin"=$1', [true]))[0];
@@ -59,6 +70,7 @@ export const updateProfile = async (req, res) => {
     if (image) uploaded = image.url;
     else uploaded = null;
     await queryDB(res, 'update users set "firstName"=$1,"lastName"=$2,email=$3, district=$4, sector=$5, cell=$6, dp=$7  where id=$8', [firstName, lastName, email, district, sector, cell, uploaded || r.dp, id]);
+    await queryDB(res, 'update records set "authorName"=$1,"authorDP"=$2 where "authorId"=$3', [`${firstName} ${lastName}`, uploaded || r.dp, id]);
     sendSuccess(res, 200, 'Profile updated successfully', { upload: uploaded ? 'success' : 'failed' });
   } else sendError(res, 403, 'Forbidden');
 };
