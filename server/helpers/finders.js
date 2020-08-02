@@ -1,16 +1,23 @@
 import { queryDB } from '../db/dbConfig';
 
 export const findRecords = async (req, res, id, isAdmin) => {
-  const { type, page } = req.query;
-  const p = (page) || 1;
+  const { type, search } = req.query;
   let query;
   let values;
   if (isAdmin) {
-    query = type ? 'select * from records where type=$1 order by "createdOn" desc limit $2 offset $3' : 'select * from records order by "createdOn" desc limit $1 offset $2';
-    values = type ? [(type === 'red') ? 'red-flag' : 'intervention', 10, (p - 1) * 10] : [10, (p - 1) * 10];
+    if (search) {
+      query = 'select * from records where title ilike $1 order by "createdOn" desc';
+      values = [`%${search}%`];
+    } else {
+      query = type ? 'select * from records where type=$1 order by "createdOn" desc' : 'select * from records order by "createdOn" desc';
+      values = type ? [(type === 'red') ? 'red-flag' : 'intervention'] : [];
+    }
+  } else if (search) {
+    query = 'select * from records where title like $1 order by "createdOn" desc';
+    values = [`%${search}%`];
   } else {
-    query = type ? 'select * from records where "authorId" = $1 and type=$2 order by "createdOn" desc limit $3 offset $4' : 'select * from records where "authorId" = $1 order by "createdOn" desc limit $2 offset $3';
-    values = type ? [id, (type === 'red') ? 'red-flag' : 'intervention', 10, (p - 1) * 10] : [id, 10, (p - 1) * 10];
+    query = type ? 'select * from records where "authorId" = $1 and type=$2 order by "createdOn" desc' : 'select * from records where "authorId" = $1 order by "createdOn" desc';
+    values = type ? [id, (type === 'red') ? 'red-flag' : 'intervention'] : [id];
   }
   const result = await queryDB(res, query, values);
   return result;
@@ -18,7 +25,7 @@ export const findRecords = async (req, res, id, isAdmin) => {
 export const findRecord = async (res, recordId, isAdmin, authorId) => {
   const query = isAdmin ? 'select * from records where id=$1' : 'select * from records where id=$1 and "authorId"=$2';
   const values = isAdmin ? [recordId] : [recordId, authorId];
-  const result = (await queryDB(res, query, values))[0];
+  const [result] = await queryDB(res, query, values);
   if (!result) return null;
   return result;
 };

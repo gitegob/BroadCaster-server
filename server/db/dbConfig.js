@@ -12,7 +12,11 @@ CREATE TABLE IF NOT EXISTS users (
     "lastName" TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
     password TEXT NOT NULL,
-    "isAdmin" BOOLEAN DEFAULT false
+    "isAdmin" BOOLEAN DEFAULT false,
+    district TEXT,
+    sector TEXT,
+    cell TEXT,
+    dp TEXT
   );
 CREATE TABLE IF NOT EXISTS records (
     id serial PRIMARY KEY UNIQUE,
@@ -34,7 +38,9 @@ DROP TABLE IF EXISTS records CASCADE;`;
 const clearQueries = `
 delete from users;
 delete from records`;
-const connectionString = process.env.NODE_ENV === 'testing' ? process.env.MOCK_DATABASE_URL : process.env.DEV_DATABASE_URL;
+let connectionString;
+if (process.env.NODE_ENV === 'testing') connectionString = process.env.MOCK_DATABASE_URL;
+else connectionString = process.env.DATABASE_URL;
 
 const db = new Pool({
   connectionString,

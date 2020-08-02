@@ -9,7 +9,7 @@ export const sendEmail = async (to, name, title, status, type) => {
   const color2 = type.toLowerCase() === 'intervention' ? 'brown' : 'rgb(98, 52, 226)';
   const msg = {
     from: '"BroadCaster" <noreply@broadcaster.com>',
-    to: 'gitegob7@yahoo.com',
+    to,
     subject: 'Update from Broadcaster',
     html: `<h2 style="text-align:center; font-family:verdana;">Hi ${name},</h2>
         <p style="text-align:center;font-family:verdana;">The status of your record with title</p><pre style="display:block;text-align:center;background-color:${color2};color:whitesmoke;padding:.1rem .3rem;border-radius:3px;width:fit-content;">${title}</pre><p style="text-align:center;font-family:verdana;">has been set to </p><pre style="display:block;color:${color};text-transform:uppercase;text-align:center">${status}</pre>`,
