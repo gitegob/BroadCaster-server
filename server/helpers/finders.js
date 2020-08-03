@@ -22,6 +22,12 @@ export const findRecords = async (req, res, id, isAdmin) => {
   const result = await queryDB(res, query, values);
   return result;
 };
+
+export const findUserRecords = async (res, id) => {
+  const result = await queryDB(res, 'select * from records where "authorId"=$1', [id]);
+  return result;
+};
+
 export const findRecord = async (res, recordId, isAdmin, authorId) => {
   const query = isAdmin ? 'select * from records where id=$1' : 'select * from records where id=$1 and "authorId"=$2';
   const values = isAdmin ? [recordId] : [recordId, authorId];

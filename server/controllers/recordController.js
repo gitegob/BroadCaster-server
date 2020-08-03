@@ -1,6 +1,6 @@
 import { sendEmail } from '../helpers/networkers';
 import { sendSuccess, sendError } from '../helpers/senders';
-import { findRecords } from '../helpers/finders';
+import { findRecords, findUserRecords } from '../helpers/finders';
 import { queryDB } from '../db/dbConfig';
 
 export const createRecord = async (req, res) => {
@@ -18,6 +18,12 @@ export const createRecord = async (req, res) => {
 export const getRecords = async (req, res) => {
   const { id, isAdmin } = req.payload;
   const result = await findRecords(req, res, id, isAdmin);
+  sendSuccess(res, 200, 'Records fetched successfully', { records: result });
+};
+
+export const getUserRecords = async (req, res) => {
+  const { id } = req.params;
+  const result = await findUserRecords(res, id);
   sendSuccess(res, 200, 'Records fetched successfully', { records: result });
 };
 
@@ -48,16 +54,16 @@ export const updateARecord = async (req, res) => {
 export const updateStatus = async (req, res) => {
   const { status } = req.body;
   const { id: recordID } = req.params;
-  const result = (await queryDB(res, 'update records set status=$1 where id=$2 returning *', [status, recordID]))[0];
+  const [result] = await queryDB(res, 'update records set status=$1 where id=$2 returning *', [status, recordID]);
   const {
     authorId, title: recordTitle, status: recordStatus, type: recordType,
   } = result;
-  const result2 = (await queryDB(res, 'select email,"firstName" from users where id=$1', [authorId]))[0];
+  const [result2] = await queryDB(res, 'select email,"firstName" from users where id=$1', [authorId]);
   const { email, firstName } = result2;
-  const error = await sendEmail(email, firstName, recordTitle, recordStatus, recordType);
+  const mailed = await sendEmail(email, firstName, recordTitle, recordStatus, recordType);
   sendSuccess(res, 200, 'Record status updated successfully', {
     status: result.status,
-    notified: error ? 'No' : 'Yes',
+    notified: mailed.accepted.length ? 'Yes' : 'No',
   });
 };
 
