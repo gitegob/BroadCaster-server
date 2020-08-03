@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import { sendSuccess, sendError } from '../helpers/senders';
 import { genToken } from '../helpers/helpers';
 import { queryDB } from '../db/dbConfig';
-import { uploadFile } from '../helpers/networkers';
+import { uploadFile, sendEmail, feedbackSender } from '../helpers/networkers';
 
 export const signUp = async (req, res) => {
   const {
@@ -73,4 +73,12 @@ export const updateProfile = async (req, res) => {
     await queryDB(res, 'update records set "authorName"=$1,"authorDP"=$2 where "authorId"=$3', [`${firstName} ${lastName}`, uploaded || r.dp, id]);
     sendSuccess(res, 200, 'Profile updated successfully', { upload: uploaded ? 'success' : 'failed' });
   } else sendError(res, 403, 'Forbidden');
+};
+
+export const sendFeedback = async (req, res) => {
+  const { email, name, feedback } = req.body;
+  const { accepted } = await feedbackSender(email, name, feedback);
+  const success = !!accepted.length;
+  if (success) sendSuccess(res, 200, 'Feedback sent successfully');
+  else return res.sendStatus(502).send('Email sending failed');
 };
