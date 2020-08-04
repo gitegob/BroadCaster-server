@@ -13,7 +13,6 @@ import { sendFeedback } from './controllers/userController';
 import { db } from './db/dbConfig';
 
 config();
-console.log('process.env.DATABASE_URL', process.env.DATABASE_URL);
 const app = express();
 const port = process.env.PORT;
 
