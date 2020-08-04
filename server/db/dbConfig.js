@@ -45,8 +45,12 @@ else connectionString = process.env.DATABASE_URL;
 const db = new Pool({
   connectionString,
 });
-// eslint-disable-next-line no-console
-db.connect(() => console.log(`Database Connected in ${process.env.NODE_ENV} mode...`.yellow.bold));
+try {
+  // eslint-disable-next-line no-console
+  db.connect(() => console.log(`Database Connected in ${process.env.NODE_ENV} mode...`.yellow.bold));
+} catch (error) {
+  console.log(error);
+}
 
 const queryDB = async (res, query, values) => {
   try {
