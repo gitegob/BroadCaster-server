@@ -5,10 +5,10 @@ import { createTransport } from 'nodemailer';
 config();
 
 const transporter = createTransport({
-  service: 'Gmail',
+  service: 'gmail',
   auth: {
-    user: process.env.G_MAIL,
-    pass: process.env.G_PWD,
+    user: `${process.env.G_MAIL}`,
+    pass: `${process.env.G_PWD}`,
   },
 });
 
@@ -277,7 +277,7 @@ export const updateEmailTemplate = (name, recordStatus, recordTitle) => `<!DOCTY
 												<!--[if mso]></td></tr></table><![endif]-->
 												<div align="center" class="button-container" style="padding-top:10px;padding-right:10px;padding-bottom:10px;padding-left:10px;">
 													<!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-spacing: 0; border-collapse: collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;"><tr><td style="padding-top: 10px; padding-right: 10px; padding-bottom: 10px; padding-left: 10px" align="center"><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${process.env.FRONTEND_URL}/" style="height:31.5pt; width:138pt; v-text-anchor:middle;" arcsize="10%" stroke="false" fillcolor="#555555"><w:anchorlock/><v:textbox inset="0,0,0,0"><center style="color:#ffffff; font-family:Arial, sans-serif; font-size:16px"><![endif]-->
-													<a href="${process.env.FRONTEND_URL}" style="-webkit-text-size-adjust: none; text-decoration: none; display: inline-block; color: #ffffff; background-color: #333333; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; width: auto; width: auto; border-top: 1px solid #555555; border-right: 1px solid #555555; border-bottom: 1px solid #555555; border-left: 1px solid #555555; padding-top: 5px; padding-bottom: 5px; font-family: Arial, Helvetica Neue, Helvetica, sans-serif; text-align: center; mso-border-alt: none; word-break: keep-all;" target="_blank">
+													<a href="${process.env.FRONTEND_URL}/" style="-webkit-text-size-adjust: none; text-decoration: none; display: inline-block; color: #ffffff; background-color: #333333; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; width: auto; width: auto; border-top: 1px solid #555555; border-right: 1px solid #555555; border-bottom: 1px solid #555555; border-left: 1px solid #555555; padding-top: 5px; padding-bottom: 5px; font-family: Arial, Helvetica Neue, Helvetica, sans-serif; text-align: center; mso-border-alt: none; word-break: keep-all;" target="_blank">
 														<span style="padding-left:20px;padding-right:20px;font-size:16px;display:inline-block;">
 															<span style="font-size: 16px; line-height: 2; word-break: break-word; mso-line-height-alt: 32px;">My Dashboard</span>
 														</span>
@@ -541,7 +541,7 @@ export const updateEmailTemplate = (name, recordStatus, recordTitle) => `<!DOCTY
 	</body>
 </html>
 `;
-export const verificationEmailTemplate = (name, verificationLink) => `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+export const verificationEmailTemplate = (name, verificationToken) => `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:o="urn:schemas-microsoft-com:office:office"
@@ -797,7 +797,7 @@ export const verificationEmailTemplate = (name, verificationLink) => `<!DOCTYPE 
 												<!--[if mso]></td></tr></table><![endif]-->
 												<div align="center" class="button-container" style="padding-top:10px;padding-right:10px;padding-bottom:10px;padding-left:10px;">
 													<!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-spacing: 0; border-collapse: collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;"><tr><td style="padding-top: 10px; padding-right: 10px; padding-bottom: 10px; padding-left: 10px" align="center"><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${process.env.FRONTEND_URL}/" style="height:31.5pt; width:138pt; v-text-anchor:middle;" arcsize="10%" stroke="false" fillcolor="#555555"><w:anchorlock/><v:textbox inset="0,0,0,0"><center style="color:#ffffff; font-family:Arial, sans-serif; font-size:16px"><![endif]-->
-													<a href="${verificationLink}" style="-webkit-text-size-adjust: none; text-decoration: none; display: inline-block; color: #ffffff; background-color: rgb(18, 110, 248); border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; width: auto; width: auto; border-top: 1px solid #555555; border-right: 1px solid #555555; border-bottom: 1px solid #555555; border-left: 1px solid #555555; padding-top: 5px; padding-bottom: 5px; font-family: Arial, Helvetica Neue, Helvetica, sans-serif; text-align: center; mso-border-alt: none; word-break: keep-all;" target="_blank">
+													<a href="${process.env.FRONTEND_URL}/signup/verify/${verificationToken}" style="-webkit-text-size-adjust: none; text-decoration: none; display: inline-block; color: #ffffff; background-color: rgb(18, 110, 248); border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; width: auto; width: auto; border-top: 1px solid #555555; border-right: 1px solid #555555; border-bottom: 1px solid #555555; border-left: 1px solid #555555; padding-top: 5px; padding-bottom: 5px; font-family: Arial, Helvetica Neue, Helvetica, sans-serif; text-align: center; mso-border-alt: none; word-break: keep-all;" target="_blank">
 														<span style="padding-left:20px;padding-right:20px;font-size:16px;display:inline-block;">
 															<span style="font-size: 16px; line-height: 2; word-break: break-word; mso-line-height-alt: 32px;">Verify</span>
 														</span>
@@ -1830,7 +1830,7 @@ export const feedbackEmailTemplate = (fromName, fromEmail, feedback) => `
 												<!--[if mso]></td></tr></table><![endif]-->
 												<div align="center" class="button-container" style="padding-top:10px;padding-right:10px;padding-bottom:10px;padding-left:10px;">
 													<!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-spacing: 0; border-collapse: collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;"><tr><td style="padding-top: 10px; padding-right: 10px; padding-bottom: 10px; padding-left: 10px" align="center"><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${process.env.FRONTEND_URL}/" style="height:31.5pt; width:138pt; v-text-anchor:middle;" arcsize="10%" stroke="false" fillcolor="#555555"><w:anchorlock/><v:textbox inset="0,0,0,0"><center style="color:#ffffff; font-family:Arial, sans-serif; font-size:16px"><![endif]-->
-													<a href="${process.env.FRONTEND_URL}" style="-webkit-text-size-adjust: none; text-decoration: none; display: inline-block; color: #ffffff; background-color: #333333; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; width: auto; width: auto; border-top: 1px solid #555555; border-right: 1px solid #555555; border-bottom: 1px solid #555555; border-left: 1px solid #555555; padding-top: 5px; padding-bottom: 5px; font-family: Arial, Helvetica Neue, Helvetica, sans-serif; text-align: center; mso-border-alt: none; word-break: keep-all;" target="_blank">
+													<a href="${process.env.FRONTEND_URL}/" style="-webkit-text-size-adjust: none; text-decoration: none; display: inline-block; color: #ffffff; background-color: #333333; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; width: auto; width: auto; border-top: 1px solid #555555; border-right: 1px solid #555555; border-bottom: 1px solid #555555; border-left: 1px solid #555555; padding-top: 5px; padding-bottom: 5px; font-family: Arial, Helvetica Neue, Helvetica, sans-serif; text-align: center; mso-border-alt: none; word-break: keep-all;" target="_blank">
 														<span style="padding-left:20px;padding-right:20px;font-size:16px;display:inline-block;">
 															<span style="font-size: 16px; line-height: 2; word-break: break-word; mso-line-height-alt: 32px;">My Dashboard</span>
 														</span>

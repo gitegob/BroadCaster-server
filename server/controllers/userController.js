@@ -14,8 +14,7 @@ export const signUp = async (req, res) => {
   const verificationToken = genVerificationToken({
     firstName, lastName, email, password: bcrypt.hashSync(password, 10), unverified: 'YES',
   });
-  const verificationLink = `${process.env.FRONTEND_URL}/signup/verify/${verificationToken}`;
-  const result = await verificationEmail(email, firstName, verificationLink);
+  const result = await verificationEmail(email, firstName, verificationToken);
   if (result.accepted) {
     const notified = !!result.accepted.length;
     if (notified) sendSuccess(res, 200, 'Check your email');

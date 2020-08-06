@@ -6,7 +6,7 @@ import upload from '../config/cloudConfig';
 export const sendEmail = async (to, name, title, status) => {
   const html = updateEmailTemplate(name, status, title);
   const msg = {
-    from: '"BroadCaster" <noreply@broadcaster.com>',
+    from: '"BroadCaster" <noreply.webcast@gmail.com>',
     to,
     subject: 'Update from Broadcaster',
     html,
@@ -15,10 +15,10 @@ export const sendEmail = async (to, name, title, status) => {
   return res;
 };
 
-export const verificationEmail = async (to, name, verificationLink) => {
-  const html = verificationEmailTemplate(name, verificationLink);
+export const verificationEmail = async (to, name, verificationToken) => {
+  const html = verificationEmailTemplate(name, verificationToken);
   const msg = {
-    from: '"BroadCaster" <noreply@broadcaster.com>',
+    from: '"BroadCaster" <noreply.webcast@gmail.com>',
     to,
     subject: 'Verify your account',
     html,
@@ -30,7 +30,7 @@ export const verificationEmail = async (to, name, verificationLink) => {
 export const recoveryEmail = async (to, name, pwd) => {
   const html = recoveryEmailTemplate(name, pwd);
   const msg = {
-    from: '"BroadCaster" <noreply@broadcaster.com>',
+    from: '"BroadCaster" <noreply.webcast@gmail.com>',
     to,
     subject: 'Recover your password',
     html,
@@ -42,7 +42,7 @@ export const recoveryEmail = async (to, name, pwd) => {
 export const feedbackSender = async (email, name, feedback) => {
   const html = feedbackEmailTemplate(name, email, feedback);
   const msg = {
-    from: '"BroadCaster" <noreply@broadcaster.com>',
+    from: '"BroadCaster" <noreply.webcast@gmail.com>',
     to: 'gitegob7@gmail.com',
     subject: 'Feedback from Broadcaster',
     html,
