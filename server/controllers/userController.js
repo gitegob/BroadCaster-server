@@ -15,9 +15,9 @@ export const signUp = async (req, res) => {
     firstName, lastName, email, password: bcrypt.hashSync(password, 10), unverified: 'YES',
   });
   const verificationLink = `${process.env.FRONTEND_URL}/signup/verify/${verificationToken}`;
-  const { accepted } = await verificationEmail(email, firstName, verificationLink);
-  if (accepted) {
-    const notified = !!accepted.length;
+  const result = await verificationEmail(email, firstName, verificationLink);
+  if (result.accepted) {
+    const notified = !!result.accepted.length;
     if (notified) sendSuccess(res, 200, 'Check your email');
   } else sendError(res, 502, 'Failed to send you an email, Try again');
 };
@@ -121,12 +121,17 @@ export const recoverPwd = async (req, res) => {
 
 export const resetPassword = async (req, res) => {
   const { oldPwd, newPwd } = req.body;
-  const [password] = await queryDB(res, 'select password from users where id = $1', [req.payload.id]);
-  const match = bcrypt.compareSync(oldPwd, password);
-  if (!match) {
-    sendError(res, 401, 'The old password is incorrect');
-  } else {
-    await queryDB(res, 'update users set password=$1 where id=$2', [bcrypt.hashSync(newPwd, 10), req.payload.id]);
-    sendSuccess(res, 200, 'Password successfully changed');
+  const [result] = await queryDB(res, 'select password from users where id = $1', [req.payload.id]);
+  try {
+    const match = bcrypt.compareSync(oldPwd, result.password);
+    if (!match) {
+      sendError(res, 401, 'The old password is incorrect');
+    } else {
+      await queryDB(res, 'update users set password=$1 where id=$2', [bcrypt.hashSync(newPwd, 10), req.payload.id]);
+      sendSuccess(res, 200, 'Password successfully changed');
+    }
+  } catch (error) {
+    console.log(error);
+    sendError(res, 500, 'Server error');
   }
 };
