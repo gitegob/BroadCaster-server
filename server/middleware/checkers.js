@@ -10,16 +10,21 @@ export const checkSignup = async (req, res, next) => {
 };
 
 export const checkLogin = async (req, res, next) => {
-  const user = (await queryDB(res, 'select * from users where email = $1', [req.body.email]))[0];
+  const [user] = await queryDB(res, 'select * from users where email = $1', [req.body.email]);
   if (!user) {
     sendError(res, 404, "User doesn't exist");
   } else {
-    const password = bcrypt.compareSync(req.body.password, user.password);
-    if (!password) {
-      sendError(res, 401, 'Incorrect password');
-    } else {
-      req.user = user;
-      next();
+    try {
+      const password = bcrypt.compareSync(req.body.password, user.password);
+      if (!password) {
+        sendError(res, 401, 'Incorrect password');
+      } else {
+        req.user = user;
+        next();
+      }
+    } catch (error) {
+      console.log(error);
+      sendError(res, 500, 'Server Error');
     }
   }
 };

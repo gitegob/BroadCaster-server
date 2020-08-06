@@ -4,14 +4,16 @@ import { findRecords, findUserRecords } from '../helpers/finders';
 import { queryDB } from '../db/dbConfig';
 
 export const createRecord = async (req, res) => {
-  const { id, firstName, lastName } = req.payload;
+  const {
+    id, firstName, lastName, dp,
+  } = req.payload;
   const {
     title, type, description, district, sector, cell,
   } = req.body;
 
   const newRecord = (await queryDB(res,
-    'insert into records ("authorId","authorName",title, type, description, district, sector, cell) values($1,$2,$3,$4,$5,$6,$7,$8) returning *',
-    [id, `${firstName} ${lastName}`, title.replace(/\s+/, ' ').trim(), type, description.replace(/\s+/, ' ').trim(), district, sector, cell]))[0];
+    'insert into records ("authorId","authorName","authorDP", title, type, description, district, sector, cell) values($1,$2,$3,$4,$5,$6,$7,$8,$9) returning *',
+    [id, `${firstName} ${lastName}`, dp, title.replace(/\s+/, ' ').trim(), type, description.replace(/\s+/, ' ').trim(), district, sector, cell]))[0];
   sendSuccess(res, 201, 'Record created successfully', { record: newRecord });
 };
 
@@ -56,14 +58,18 @@ export const updateStatus = async (req, res) => {
   const { id: recordID } = req.params;
   const [result] = await queryDB(res, 'update records set status=$1 where id=$2 returning *', [status, recordID]);
   const {
-    authorId, title: recordTitle, status: recordStatus, type: recordType,
+    authorId, title: recordTitle, status: recordStatus,
   } = result;
-  const [result2] = await queryDB(res, 'select email,"firstName" from users where id=$1', [authorId]);
-  const { email, firstName } = result2;
-  const mailed = await sendEmail(email, firstName, recordTitle, recordStatus, recordType);
+  const [result2] = await queryDB(res, 'select email,"firstName","allowEmails" from users where id=$1', [authorId]);
+  const { email, firstName, allowEmails } = result2;
+  let mailed;
+  if (allowEmails) {
+    const { accepted } = await sendEmail(email, firstName, recordTitle, recordStatus);
+    mailed = accepted.length;
+  }
   sendSuccess(res, 200, 'Record status updated successfully', {
     status: result.status,
-    notified: mailed.accepted.length ? 'Yes' : 'No',
+    notified: mailed ? 'Yes' : 'No',
   });
 };
 
