@@ -14,7 +14,7 @@ const schema = {
       .required(),
     email: Joi.string().email().required(),
     password: Joi.string()
-      .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$^+=!*?<>,()@%&%_.]).{8,128}$/)
+      .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,128}$/)
       .required(),
   }),
   loginSchema: Joi.object({

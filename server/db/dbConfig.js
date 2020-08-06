@@ -16,13 +16,16 @@ CREATE TABLE IF NOT EXISTS users (
     district TEXT,
     sector TEXT,
     cell TEXT,
-    dp TEXT
+    dp TEXT,
+    "allowEmails" BOOLEAN DEFAULT false,
+    "recoveryEmail TEXT
   );
 CREATE TABLE IF NOT EXISTS records (
     id serial PRIMARY KEY UNIQUE,
     "createdOn" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     "authorId" INTEGER REFERENCES users (id) ON DELETE CASCADE,
     "authorName" TEXT,
+    "authorDP" TEXT,
     title TEXT NOT NULL,
     type TEXT NOT NULL,
     description TEXT NOT NULL,

@@ -14,12 +14,17 @@ export const auth = async (req, res, next) => {
   } catch (error) {
     return sendError(res, 401, 'Invalid token');
   }
-  const match = (await queryDB(res, 'select email from users where email=$1', [decoded.email]))[0];
-  if (!match) {
-    return sendError(res, 401, 'Invalid token');
+  if (!decoded.unverified) {
+    const match = (await queryDB(res, 'select email from users where email=$1', [decoded.email]))[0];
+    if (!match) {
+      return sendError(res, 401, 'Invalid token');
+    }
+    req.payload = decoded;
+    next();
+  } else {
+    req.unverified = decoded;
+    next();
   }
-  req.payload = decoded;
-  next();
 };
 
 export const adminAuth = (req, res, next) => {
