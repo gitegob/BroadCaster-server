@@ -77,15 +77,12 @@ export const updateProfile = async (req, res) => {
   if (`${req.payload.id}` === req.params.id) {
     const [r] = await queryDB(res, 'select * from users where id=$1', [req.payload.id]);
     const {
-      firstName = r.firstName, lastName = r.lastName,
-      email = r.email, district = r.district, sector = r.sector,
-      cell = r.cell, allowEmails = r.allowEmails,
+      firstName = r.firstName, lastName = r.lastName, district = r.district, sector = r.sector,
+      cell = r.cell, allowEmails,
     } = req.body;
     const image = await uploadFile(req);
-    let uploaded;
-    if (image) uploaded = image.url;
-    else uploaded = null;
-    await queryDB(res, 'update users set "firstName"=$1,"lastName"=$2,email=$3, district=$4, sector=$5, cell=$6, dp=$7,"allowEmails"=$8 where id=$9', [firstName, lastName, email, district, sector, cell, uploaded || r.dp, allowEmails, id]);
+    const uploaded = image ? image.url : null;
+    await queryDB(res, 'update users set "firstName"=$1,"lastName"=$2, district=$3, sector=$4, cell=$5, dp=$6,"allowEmails"=$7 where id=$8', [firstName, lastName, district, sector, cell, uploaded || r.dp, !!allowEmails, id]);
     await queryDB(res, 'update records set "authorName"=$1,"authorDP"=$2 where "authorId"=$3', [`${firstName} ${lastName}`, uploaded || r.dp, id]);
     sendSuccess(res, 200, 'Profile updated successfully', { upload: uploaded ? 'success' : 'failed' });
   } else sendError(res, 403, 'Forbidden');
