@@ -80,11 +80,25 @@ export const updateProfile = async (req, res) => {
       firstName = r.firstName, lastName = r.lastName, district = r.district, sector = r.sector,
       cell = r.cell, allowEmails,
     } = req.body;
+    await queryDB(res, 'update users set "firstName"=$1,"lastName"=$2, district=$3, sector=$4, cell=$5,"allowEmails"=$6 where id=$7', [firstName, lastName, district, sector, cell, !!allowEmails, id]);
+    await queryDB(res, 'update records set "authorName"=$1 where "authorId"=$2', [`${firstName} ${lastName}`, id]);
+    sendSuccess(res, 200, 'Profile updated successfully');
+  } else sendError(res, 403, 'Forbidden');
+};
+
+export const updateProfilePic = async (req, res) => {
+  const { id } = req.params;
+  if (`${req.payload.id}` === req.params.id) {
+    const [r] = await queryDB(res, 'select * from users where id=$1', [req.payload.id]);
     const image = await uploadFile(req);
     const uploaded = image ? image.url : null;
-    await queryDB(res, 'update users set "firstName"=$1,"lastName"=$2, district=$3, sector=$4, cell=$5, dp=$6,"allowEmails"=$7 where id=$8', [firstName, lastName, district, sector, cell, uploaded || r.dp, !!allowEmails, id]);
-    await queryDB(res, 'update records set "authorName"=$1,"authorDP"=$2 where "authorId"=$3', [`${firstName} ${lastName}`, uploaded || r.dp, id]);
-    sendSuccess(res, 200, 'Profile updated successfully', { upload: uploaded ? 'success' : 'failed' });
+    if (uploaded) {
+      await queryDB(res, 'update users set dp=$1 where id=$2', [uploaded || r.dp, id]);
+      await queryDB(res, 'update records set "authorDP"=$1 where "authorId"=$2', [uploaded || r.dp, id]);
+      sendSuccess(res, 200, 'Profile picture updated successfully', { upload: uploaded ? 'success' : 'failed' });
+    } else {
+      sendError(res, 500, 'Profile picture upload failed, check your internet connection.');
+    }
   } else sendError(res, 403, 'Forbidden');
 };
 
