@@ -2,7 +2,7 @@ import { Router } from 'express';
 import fileupload from 'express-fileupload';
 import {
   signUp, logIn, getProfile, makeAdmin, updateProfile, getUserData, verifySignup,
-  recoverPwd, resetPassword,
+  recoverPwd, resetPassword, updateProfilePic,
 } from '../controllers/userController';
 import { validateSignup, validateLogin } from '../middleware/validators';
 import { checkSignup, checkLogin } from '../middleware/checkers';
@@ -30,6 +30,7 @@ router.post('/signup', validateSignup, checkSignup, signUp);
 router.get('/signup/verify', auth, verifySignup);
 router.post('/login', validateLogin, checkLogin, logIn);
 router.patch('/profile/:id', auth, updateProfile);
+router.patch('/profile/:id/dp', auth, updateProfilePic);
 router.post('/recoverpwd', recoverPwd);
 router.post('/resetPwd', auth, resetPassword);
 router.post('/error', serverError);
