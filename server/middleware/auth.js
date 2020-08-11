@@ -7,23 +7,19 @@ export const auth = async (req, res, next) => {
   if (!authorization) {
     return sendError(res, 401, 'Please log in or signup first');
   }
-  let decoded = {};
   try {
     const token = authorization.split(' ')[1];
-    decoded = jwt.verify(token, process.env.JWT_KEY);
+    const decoded = jwt.verify(token, process.env.JWT_KEY);
+    if (decoded) {
+      const match = (await queryDB(res, 'select email from users where email=$1', [decoded.email]))[0];
+      if (!match) {
+        return sendError(res, 401, 'Invalid token');
+      }
+      req.payload = decoded;
+      next();
+    } else sendError(res, 401, 'Invalid token');
   } catch (error) {
-    return sendError(res, 401, 'Invalid token');
-  }
-  if (!decoded.unverified) {
-    const match = (await queryDB(res, 'select email from users where email=$1', [decoded.email]))[0];
-    if (!match) {
-      return sendError(res, 401, 'Invalid token');
-    }
-    req.payload = decoded;
-    next();
-  } else {
-    req.unverified = decoded;
-    next();
+    return sendError(res, 500, 'Server Error! Try again');
   }
 };
 

@@ -1,5 +1,5 @@
 import sendMail, {
-  updateEmailTemplate, verificationEmailTemplate, recoveryEmailTemplate, feedbackEmailTemplate,
+  updateEmailTemplate, recoveryEmailTemplate, feedbackEmailTemplate,
 } from '../config/mailerConfig';
 import upload from '../config/cloudConfig';
 
@@ -9,18 +9,6 @@ export const sendEmail = async (to, name, title, status) => {
     from: '"BroadCaster" <noreply.webcast@gmail.com>',
     to,
     subject: 'Update from Broadcaster',
-    html,
-  };
-  const res = await sendMail(msg);
-  return res;
-};
-
-export const verificationEmail = async (to, name, verificationToken) => {
-  const html = verificationEmailTemplate(name, verificationToken);
-  const msg = {
-    from: '"BroadCaster" <noreply.webcast@gmail.com>',
-    to,
-    subject: 'Verify your account',
     html,
   };
   const res = await sendMail(msg);

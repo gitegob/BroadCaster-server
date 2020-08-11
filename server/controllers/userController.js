@@ -1,32 +1,18 @@
 import bcrypt from 'bcrypt';
 import { v4 as uuid } from 'uuid';
 import { sendSuccess, sendError } from '../helpers/senders';
-import { genToken, genVerificationToken } from '../helpers/helpers';
+import { genToken } from '../helpers/helpers';
 import { queryDB } from '../db/dbConfig';
 import {
-  uploadFile, verificationEmail, feedbackSender, recoveryEmail,
+  uploadFile, feedbackSender, recoveryEmail,
 } from '../helpers/networkers';
 
 export const signUp = async (req, res) => {
   const {
     firstName, lastName, email, password,
   } = req.body;
-  const verificationToken = genVerificationToken({
-    firstName, lastName, email, password: bcrypt.hashSync(password, 10), unverified: 'YES',
-  });
-  const result = await verificationEmail(email, firstName, verificationToken);
-  if (result.accepted) {
-    const notified = !!result.accepted.length;
-    if (notified) sendSuccess(res, 200, 'Check your email');
-  } else sendError(res, 502, 'Failed to send you an email, Try again');
-};
-
-export const verifySignup = async (req, res) => {
-  const {
-    firstName, lastName, email, password,
-  } = req.unverified;
-  await queryDB(res, 'insert into users ("firstName", "lastName", "email", "password") values ($1,$2,$3,$4)', [firstName, lastName, email, password]);
-  sendSuccess(res, 201, 'User created successfully');
+  const [newUser] = await queryDB(res, 'insert into users ("firstName", "lastName", "email", "password") values ($1,$2,$3,$4) returning *', [firstName, lastName, email, bcrypt.hashSync(password, 10)]);
+  sendSuccess(res, 201, 'User created successfully', { token: genToken(newUser) });
 };
 
 export const logIn = (req, res) => {
@@ -141,7 +127,6 @@ export const resetPassword = async (req, res) => {
       sendSuccess(res, 200, 'Password successfully changed');
     }
   } catch (error) {
-    console.log(error);
     sendError(res, 500, 'Server error');
   }
 };
