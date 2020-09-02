@@ -2,6 +2,7 @@ import { Pool } from 'pg';
 import 'colors';
 import { config } from 'dotenv';
 import { sendError } from '../helpers/senders';
+import { debugDb, debugError } from '../config/debug';
 
 config();
 
@@ -50,9 +51,9 @@ const db = new Pool({
 });
 try {
   // eslint-disable-next-line no-console
-  db.connect(() => console.log(`Database Connected in ${process.env.NODE_ENV} mode...`.yellow.bold));
+  db.connect(() => debugDb(`Database Connected in ${process.env.NODE_ENV} mode...`.yellow.bold));
 } catch (error) {
-  console.log(error);
+  debugError(error.stack);
 }
 
 const queryDB = async (res, query, values) => {
@@ -60,6 +61,7 @@ const queryDB = async (res, query, values) => {
     const result = values.length ? await db.query(query, values) : await db.query(query);
     return result.rows;
   } catch (error) {
+    debugError(error);
     return sendError(res, 500, `DATABASE ERROR: ${error.message}`);
   }
 };

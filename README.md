@@ -1,7 +1,5 @@
 # BroadCaster
 
-[![Build Status](https://travis-ci.org/gitego-brian/BroadCaster-server.svg?branch=develop)](https://travis-ci.org/gitego-brian/BroadCaster-server)
-[![Coverage Status](https://coveralls.io/repos/github/gitego-brian/BroadCaster-server/badge.svg?branch=update%233-server)](https://coveralls.io/github/gitego-brian/BroadCaster-server?branch=update%233-server)
 [![Maintainability](https://api.codeclimate.com/v1/badges/d9bdd095911059b8917a/maintainability)](https://codeclimate.com/github/gitego-brian/BroadCaster-server/maintainability)
 
 Broadcaster enables any/every citizen to bring any form of corruption to the notice of appropriate authorities and the general public. Users can also report on things that need government intervention.
