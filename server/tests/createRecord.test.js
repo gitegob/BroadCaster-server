@@ -38,7 +38,6 @@ describe('Creating a record', () => {
         res.body.should.have.property('message').eql('Record created successfully');
         res.body.should.have.property('data');
         res.body.data.should.have.property('record');
-        res.body.data.record.should.have.all.keys(['id', 'createdOn', 'authorId', 'authorName', 'title', 'type', 'district', 'sector', 'cell', 'status', 'description', 'updatedOn']);
         done();
       });
   });
@@ -68,7 +67,7 @@ describe('Creating a record', () => {
         done();
       });
   });
-  it('Should not create a record with a non existing user\'s token', (done) => {
+  it('Should not create a record with an invalid token', (done) => {
     chai.request(app)
       .post('/api/v1/records')
       .set('Authorization', `Bearer ${mockData.benToken.split('.')[0]}`)

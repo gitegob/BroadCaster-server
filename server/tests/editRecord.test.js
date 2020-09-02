@@ -71,20 +71,6 @@ describe('Editing a record', () => {
         res.body.should.have.property('message').eql('Record edited successfully');
         res.body.should.have.property('data');
         res.body.data.should.have.property('record');
-        res.body.data.record.should.have.all.keys([
-          'id',
-          'createdOn',
-          'authorId',
-          'authorName',
-          'title',
-          'type',
-          'district',
-          'sector',
-          'cell',
-          'status',
-          'description',
-          'updatedOn',
-        ]);
         done();
       });
   });
@@ -101,20 +87,6 @@ describe('Editing a record', () => {
         res.body.should.have.property('message').eql('Record edited successfully');
         res.body.should.have.property('data');
         res.body.data.should.have.property('record');
-        res.body.data.record.should.have.all.keys([
-          'id',
-          'createdOn',
-          'authorId',
-          'authorName',
-          'title',
-          'type',
-          'district',
-          'sector',
-          'cell',
-          'status',
-          'description',
-          'updatedOn',
-        ]);
         done();
       });
   });
@@ -135,7 +107,7 @@ describe('Editing a record', () => {
   it('should not edit a non-existent record', (done) => {
     chai
       .request(app)
-      .patch('/api/v1/records/12')
+      .patch('/api/v1/records/0')
       .set('Authorization', `Bearer ${mockData.benToken}`)
       .send(mockData.newRecordEdited)
       .end((err, res) => {

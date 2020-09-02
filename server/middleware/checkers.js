@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 import { sendError } from '../helpers/senders';
 import { queryDB } from '../db/dbConfig';
 import { findRecord } from '../helpers/finders';
+import { debugError } from '../config/debug';
 
 export const checkSignup = async (req, res, next) => {
   const match = (await queryDB(res, 'select email from users where email=$1', [req.body.email]))[0];
@@ -23,7 +24,7 @@ export const checkLogin = async (req, res, next) => {
         next();
       }
     } catch (error) {
-      console.log(error);
+      debugError(error);
       sendError(res, 500, 'Server Error');
     }
   }

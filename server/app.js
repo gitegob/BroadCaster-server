@@ -11,6 +11,7 @@ import recordRoutes from './routes/recordRoutes';
 import { sendFeedback } from './controllers/userController';
 // eslint-disable-next-line no-unused-vars
 import { db } from './db/dbConfig';
+import { debugApp, debugError } from './config/debug';
 
 config();
 const app = express();
@@ -36,12 +37,12 @@ app.use('/*', (_req, res) => {
 
 // eslint-disable-next-line no-unused-vars
 app.use((error, req, res, next) => {
-  console.log('error => ', error.message);
+  debugError('error => ', error.message);
   sendError(res, error.status || 500, `SERVER DOWN!: ${error.message}`);
 });
 
 app.listen(port, () => {
-  console.log(`Server running on ${port}...`.cyan.bold);
+  debugApp(`Server running on ${port}...`.cyan.bold);
 });
 
 export default app;

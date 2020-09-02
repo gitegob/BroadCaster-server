@@ -19,7 +19,7 @@ export const auth = async (req, res, next) => {
       next();
     } else sendError(res, 401, 'Invalid token');
   } catch (error) {
-    return sendError(res, 500, 'Server Error! Try again');
+    return sendError(res, 401, 'Invalid token');
   }
 };
 

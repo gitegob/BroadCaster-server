@@ -62,10 +62,10 @@ describe('Signup tests', () => {
         done();
       });
   });
-  it('should retrieve a user\'s profile', (done) => {
+  it('should retrieve a user\'s data', (done) => {
     chai
       .request(app)
-      .get('/api/v1/auth/profile')
+      .get('/api/v1/auth/userData')
       .set('Authorization', `Bearer ${mockData.benToken}`)
       .end((_err, res) => {
         res.should.have.status(200);
