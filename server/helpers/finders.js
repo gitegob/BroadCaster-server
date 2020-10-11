@@ -10,14 +10,16 @@ export const findRecords = async (req, res, id, isAdmin) => {
       values = [`%${search}%`];
     } else {
       query = type ? 'select * from records where type=$1 order by "createdOn" desc' : 'select * from records order by "createdOn" desc';
-      values = type ? [(type === 'red') ? 'red-flag' : 'intervention'] : [];
+      values = type ? [type === 'red' ? 'red-flag' : 'intervention'] : [];
     }
   } else if (search) {
-    query = 'select * from records where title like $1 order by "createdOn" desc';
-    values = [`%${search}%`];
+    query = 'select * from records where "authorId" = $1 and title ilike $2 order by "createdOn" desc';
+    values = [id, `%${search}%`];
   } else {
-    query = type ? 'select * from records where "authorId" = $1 and type=$2 order by "createdOn" desc' : 'select * from records where "authorId" = $1 order by "createdOn" desc';
-    values = type ? [id, (type === 'red') ? 'red-flag' : 'intervention'] : [id];
+    query = type
+      ? 'select * from records where "authorId" = $1 and type=$2 order by "createdOn" desc'
+      : 'select * from records where "authorId" = $1 order by "createdOn" desc';
+    values = type ? [id, type === 'red' ? 'red-flag' : 'intervention'] : [id];
   }
   const result = await queryDB(res, query, values);
   return result;
