@@ -25,7 +25,8 @@ app.use(
   }),
 );
 app.use(morgan('dev'));
-app.get('/', (_req, res) => {
+app.get('/', async (_req, res) => {
+  await notifySlack('App GET /');
   sendSuccess(res, 200, `Welcome to BroadCaster ${env.NODE_ENV} mode`);
 });
 app.post('/api/v1/feedback', sendFeedback);
