@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { sendError } from '../helpers/senders';
 import { queryDB } from '../db/dbConfig';
+import env from '../config/env';
 
 export const auth = async (req, res, next) => {
   const { authorization } = req.headers;
@@ -9,7 +10,7 @@ export const auth = async (req, res, next) => {
   }
   try {
     const token = authorization.split(' ')[1];
-    const decoded = jwt.verify(token, process.env.JWT_KEY);
+    const decoded = jwt.verify(token, env.JWT_KEY);
     if (decoded) {
       const match = (await queryDB(res, 'select email from users where email=$1', [decoded.email]))[0];
       if (!match) {

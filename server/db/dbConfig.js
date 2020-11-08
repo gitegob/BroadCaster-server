@@ -1,10 +1,9 @@
 import { Pool } from 'pg';
 import 'colors';
-import { config } from 'dotenv';
 import { sendError } from '../helpers/senders';
 import { debugDb, debugError } from '../config/debug';
-
-config();
+import env from '../config/env';
+import notifySlack from '../config/slack';
 
 const createQueries = `
 CREATE TABLE IF NOT EXISTS users (
@@ -43,16 +42,17 @@ const clearQueries = `
 delete from users;
 delete from records`;
 let connectionString;
-if (process.env.NODE_ENV === 'testing') connectionString = process.env.MOCK_DATABASE_URL;
-else connectionString = process.env.DATABASE_URL;
+if (env.NODE_ENV === 'testing') connectionString = env.MOCK_DATABASE_URL;
+else connectionString = env.DATABASE_URL;
 
 const db = new Pool({
   connectionString,
 });
 try {
   // eslint-disable-next-line no-console
-  db.connect(() => debugDb(`Database Connected in ${process.env.NODE_ENV} mode...`.yellow.bold));
+  db.connect(() => debugDb(`Database Connected in ${env.NODE_ENV} mode...`.yellow.bold));
 } catch (error) {
+  notifySlack(error);
   debugError(error.stack);
 }
 
@@ -61,6 +61,7 @@ const queryDB = async (res, query, values) => {
     const result = values.length ? await db.query(query, values) : await db.query(query);
     return result.rows;
   } catch (error) {
+    notifySlack(error);
     debugError(error);
     return sendError(res, 500, `DATABASE ERROR: ${error.message}`);
   }

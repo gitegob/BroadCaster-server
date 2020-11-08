@@ -6,6 +6,7 @@ import { queryDB } from '../db/dbConfig';
 import {
   uploadFile, feedbackSender, recoveryEmail,
 } from '../helpers/networkers';
+import env from '../config/env';
 
 export const signUp = async (req, res) => {
   const {
@@ -46,12 +47,12 @@ export const getProfile = async (req, res) => {
 export const makeAdmin = async (req, res) => {
   const { password } = req.body;
   const result = (await queryDB(res, 'select email from users where "isAdmin"=$1', [true]))[0];
-  if (password === process.env.A_PASSWORD) {
+  if (password === env.A_PASSWORD) {
     if (result) sendError(res, 409, `Admin already exists:${result.email}`);
     else {
       const {
         A_FNAME, A_LNAME, A_EMAIL, A_PASSWORD,
-      } = process.env;
+      } = env;
       await queryDB(res, 'insert into users ("firstName", "lastName", "email", "password", "isAdmin") values ($1,$2,$3,$4,$5)', [A_FNAME, A_LNAME, A_EMAIL, bcrypt.hashSync(A_PASSWORD, 10), true]);
       sendSuccess(res, 201, 'Admin created successfully');
     }

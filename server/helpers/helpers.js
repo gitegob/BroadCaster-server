@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import env from '../config/env';
 import { sendError } from './senders';
 
 export const checkJoiError = (error, res, next) => {
@@ -19,11 +20,11 @@ export const genToken = ({
     isAdmin,
     dp,
   },
-  process.env.JWT_KEY,
+  env.JWT_KEY,
   { expiresIn: '5h' },
 );
 
-export const genVerificationToken = (payload) => jwt.sign(payload, process.env.JWT_KEY, { expiresIn: '5h' });
+export const genVerificationToken = (payload) => jwt.sign(payload, env.JWT_KEY, { expiresIn: '5h' });
 export const serverError = (status, message) => {
   const error = new Error();
   error.status = status;
