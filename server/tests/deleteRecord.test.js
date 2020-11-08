@@ -5,6 +5,7 @@ import {
   describe, before, after, it,
 } from 'mocha';
 import app from '../app';
+import env from '../config/env';
 import { mockData, clearRecords, clearUsers } from './utils';
 
 chai.use(chaiHttp);
@@ -15,7 +16,7 @@ describe('Deleting a record', () => {
     chai
       .request(app)
       .post('/api/v1/auth/make-admin')
-      .send({ password: process.env.A_PASSWORD })
+      .send({ password: env.A_PASSWORD })
       .end((_err, _res) => {
         done();
       });

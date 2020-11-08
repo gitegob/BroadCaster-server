@@ -1,24 +1,22 @@
 /* eslint-disable no-tabs */
-import { config } from 'dotenv';
 import { createTransport } from 'nodemailer';
-
-config();
+import env from './env';
 
 const transporter = createTransport({
-  service: 'gmail',
-  auth: {
-    user: `${process.env.G_MAIL}`,
-    pass: `${process.env.G_PWD}`,
-  },
+	service: 'gmail',
+	auth: {
+		user: `${env.G_MAIL}`,
+		pass: `${env.G_PWD}`,
+	},
 });
 
 const sendMail = async (msg) => {
-  try {
-    const resp = await transporter.sendMail(msg);
-    return resp;
-  } catch (error) {
-    return error.message;
-  }
+	try {
+		const resp = await transporter.sendMail(msg);
+		return resp;
+	} catch (error) {
+		return error.message;
+	}
 };
 
 export const updateEmailTemplate = (name, recordStatus, recordTitle) => `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -276,8 +274,8 @@ export const updateEmailTemplate = (name, recordStatus, recordTitle) => `<!DOCTY
 												</div>
 												<!--[if mso]></td></tr></table><![endif]-->
 												<div align="center" class="button-container" style="padding-top:10px;padding-right:10px;padding-bottom:10px;padding-left:10px;">
-													<!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-spacing: 0; border-collapse: collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;"><tr><td style="padding-top: 10px; padding-right: 10px; padding-bottom: 10px; padding-left: 10px" align="center"><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${process.env.FRONTEND_URL}/" style="height:31.5pt; width:138pt; v-text-anchor:middle;" arcsize="10%" stroke="false" fillcolor="#555555"><w:anchorlock/><v:textbox inset="0,0,0,0"><center style="color:#ffffff; font-family:Arial, sans-serif; font-size:16px"><![endif]-->
-													<a href="${process.env.FRONTEND_URL}/" style="-webkit-text-size-adjust: none; text-decoration: none; display: inline-block; color: #ffffff; background-color: #333333; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; width: auto; width: auto; border-top: 1px solid #555555; border-right: 1px solid #555555; border-bottom: 1px solid #555555; border-left: 1px solid #555555; padding-top: 5px; padding-bottom: 5px; font-family: Arial, Helvetica Neue, Helvetica, sans-serif; text-align: center; mso-border-alt: none; word-break: keep-all;" target="_blank">
+													<!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-spacing: 0; border-collapse: collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;"><tr><td style="padding-top: 10px; padding-right: 10px; padding-bottom: 10px; padding-left: 10px" align="center"><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${env.FRONTEND_URL}/" style="height:31.5pt; width:138pt; v-text-anchor:middle;" arcsize="10%" stroke="false" fillcolor="#555555"><w:anchorlock/><v:textbox inset="0,0,0,0"><center style="color:#ffffff; font-family:Arial, sans-serif; font-size:16px"><![endif]-->
+													<a href="${env.FRONTEND_URL}/" style="-webkit-text-size-adjust: none; text-decoration: none; display: inline-block; color: #ffffff; background-color: #333333; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; width: auto; width: auto; border-top: 1px solid #555555; border-right: 1px solid #555555; border-bottom: 1px solid #555555; border-left: 1px solid #555555; padding-top: 5px; padding-bottom: 5px; font-family: Arial, Helvetica Neue, Helvetica, sans-serif; text-align: center; mso-border-alt: none; word-break: keep-all;" target="_blank">
 														<span style="padding-left:20px;padding-right:20px;font-size:16px;display:inline-block;">
 															<span style="font-size: 16px; line-height: 2; word-break: break-word; mso-line-height-alt: 32px;">My Dashboard</span>
 														</span>
@@ -365,7 +363,7 @@ export const updateEmailTemplate = (name, recordStatus, recordTitle) => `<!DOCTY
 														<p style="font-size: 14px; line-height: 1.5; word-break: break-word; text-align: center; font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif; mso-line-height-alt: 21px; margin: 0;">
 															<strong>
 																<span style="font-size: 15px; color: #db3743;">
-																	<a href="${process.env.FRONTEND_URL}/about" rel="noopener" style="text-decoration: underline; color: #0068A5;" target="_blank">Contact us</a>
+																	<a href="${env.FRONTEND_URL}/about" rel="noopener" style="text-decoration: underline; color: #0068A5;" target="_blank">Contact us</a>
 																</span>
 															</strong>
 														</p>
@@ -880,7 +878,7 @@ export const recoveryEmailTemplate = (name, pwd) => `
 														<p style="font-size: 14px; line-height: 1.5; word-break: break-word; text-align: center; font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif; mso-line-height-alt: 21px; margin: 0;">
 															<strong>
 																<span style="font-size: 15px; color: #db3743;">
-																	<a href="${process.env.FRONTEND_URL}/about" rel="noopener" style="text-decoration: underline; color: #0068A5;" target="_blank">Contact us</a>
+																	<a href="${env.FRONTEND_URL}/about" rel="noopener" style="text-decoration: underline; color: #0068A5;" target="_blank">Contact us</a>
 																</span>
 															</strong>
 														</p>
@@ -1310,8 +1308,8 @@ export const feedbackEmailTemplate = (fromName, fromEmail, feedback) => `
 												</div>
 												<!--[if mso]></td></tr></table><![endif]-->
 												<div align="center" class="button-container" style="padding-top:10px;padding-right:10px;padding-bottom:10px;padding-left:10px;">
-													<!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-spacing: 0; border-collapse: collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;"><tr><td style="padding-top: 10px; padding-right: 10px; padding-bottom: 10px; padding-left: 10px" align="center"><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${process.env.FRONTEND_URL}/" style="height:31.5pt; width:138pt; v-text-anchor:middle;" arcsize="10%" stroke="false" fillcolor="#555555"><w:anchorlock/><v:textbox inset="0,0,0,0"><center style="color:#ffffff; font-family:Arial, sans-serif; font-size:16px"><![endif]-->
-													<a href="${process.env.FRONTEND_URL}/" style="-webkit-text-size-adjust: none; text-decoration: none; display: inline-block; color: #ffffff; background-color: #333333; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; width: auto; width: auto; border-top: 1px solid #555555; border-right: 1px solid #555555; border-bottom: 1px solid #555555; border-left: 1px solid #555555; padding-top: 5px; padding-bottom: 5px; font-family: Arial, Helvetica Neue, Helvetica, sans-serif; text-align: center; mso-border-alt: none; word-break: keep-all;" target="_blank">
+													<!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-spacing: 0; border-collapse: collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;"><tr><td style="padding-top: 10px; padding-right: 10px; padding-bottom: 10px; padding-left: 10px" align="center"><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${env.FRONTEND_URL}/" style="height:31.5pt; width:138pt; v-text-anchor:middle;" arcsize="10%" stroke="false" fillcolor="#555555"><w:anchorlock/><v:textbox inset="0,0,0,0"><center style="color:#ffffff; font-family:Arial, sans-serif; font-size:16px"><![endif]-->
+													<a href="${env.FRONTEND_URL}/" style="-webkit-text-size-adjust: none; text-decoration: none; display: inline-block; color: #ffffff; background-color: #333333; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; width: auto; width: auto; border-top: 1px solid #555555; border-right: 1px solid #555555; border-bottom: 1px solid #555555; border-left: 1px solid #555555; padding-top: 5px; padding-bottom: 5px; font-family: Arial, Helvetica Neue, Helvetica, sans-serif; text-align: center; mso-border-alt: none; word-break: keep-all;" target="_blank">
 														<span style="padding-left:20px;padding-right:20px;font-size:16px;display:inline-block;">
 															<span style="font-size: 16px; line-height: 2; word-break: break-word; mso-line-height-alt: 32px;">My Dashboard</span>
 														</span>
@@ -1399,7 +1397,7 @@ export const feedbackEmailTemplate = (fromName, fromEmail, feedback) => `
 														<p style="font-size: 14px; line-height: 1.5; word-break: break-word; text-align: center; font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif; mso-line-height-alt: 21px; margin: 0;">
 															<strong>
 																<span style="font-size: 15px; color: #db3743;">
-																	<a href="${process.env.FRONTEND_URL}/about" rel="noopener" style="text-decoration: underline; color: #0068A5;" target="_blank">Contact us</a>
+																	<a href="${env.FRONTEND_URL}/about" rel="noopener" style="text-decoration: underline; color: #0068A5;" target="_blank">Contact us</a>
 																</span>
 															</strong>
 														</p>

@@ -2,6 +2,7 @@ import chai from 'chai';
 import chaiHttp from 'chai-http';
 import { after, describe, it } from 'mocha';
 import app from '../app';
+import env from '../config/env';
 import { mockData, clearUsers } from './utils';
 
 chai.use(chaiHttp);
@@ -15,7 +16,7 @@ describe('Signup tests', () => {
     chai
       .request(app)
       .post('/api/v1/auth/make-admin')
-      .send({ password: process.env.A_PASSWORD })
+      .send({ password: env.A_PASSWORD })
       .end((_err, res) => {
         res.should.have.status(201);
         res.body.should.have.property('status').eql(201);
@@ -27,11 +28,11 @@ describe('Signup tests', () => {
     chai
       .request(app)
       .post('/api/v1/auth/make-admin')
-      .send({ password: process.env.A_PASSWORD })
+      .send({ password: env.A_PASSWORD })
       .end((_err, res) => {
         res.should.have.status(409);
         res.body.should.have.property('status').eql(409);
-        res.body.should.have.property('error').eql(`Admin already exists:${process.env.A_EMAIL}`);
+        res.body.should.have.property('error').eql(`Admin already exists:${env.A_EMAIL}`);
         done();
       });
   });

@@ -1,14 +1,12 @@
 /* eslint-disable no-unused-vars */
 import chai from 'chai';
 import chaiHttp from 'chai-http';
-import { config } from 'dotenv';
 import {
   describe, before, after, it,
 } from 'mocha';
 import app from '../app';
+import env from '../config/env';
 import { mockData, clearRecords, clearUsers } from './utils';
-
-config();
 
 chai.use(chaiHttp);
 chai.should();
@@ -38,7 +36,7 @@ describe('Fetching records', () => {
     chai
       .request(app)
       .post('/api/v1/auth/make-admin')
-      .send({ password: process.env.A_PASSWORD })
+      .send({ password: env.A_PASSWORD })
       .end((_err, _res) => {
         done();
       });

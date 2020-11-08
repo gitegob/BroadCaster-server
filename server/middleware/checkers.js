@@ -3,10 +3,11 @@ import { sendError } from '../helpers/senders';
 import { queryDB } from '../db/dbConfig';
 import { findRecord } from '../helpers/finders';
 import { debugError } from '../config/debug';
+import notifySlack from '../config/slack';
 
 export const checkSignup = async (req, res, next) => {
   const match = (await queryDB(res, 'select email from users where email=$1', [req.body.email]))[0];
-  if (match)sendError(res, 409, 'Email already exists');
+  if (match) sendError(res, 409, 'Email already exists');
   else next();
 };
 
@@ -24,6 +25,7 @@ export const checkLogin = async (req, res, next) => {
         next();
       }
     } catch (error) {
+      notifySlack(error);
       debugError(error);
       sendError(res, 500, 'Server Error');
     }

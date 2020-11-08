@@ -1,14 +1,12 @@
-import { config } from 'dotenv';
+import env from '../config/env';
 import { queryDB } from '../db/dbConfig';
-
-config();
 
 export const mockData = {
   admin: {
-    firstName: process.env.A_FNAME,
-    lastName: process.env.A_LNAME,
-    email: process.env.A_EMAIL,
-    password: process.env.A_PASSWORD,
+    firstName: env.A_FNAME,
+    lastName: env.A_LNAME,
+    email: env.A_EMAIL,
+    password: env.A_PASSWORD,
   },
   benSignup: {
     firstName: 'Ben Fabregas',
@@ -38,8 +36,8 @@ export const mockData = {
     password: 'Password@123',
   },
   adminLogin: {
-    email: process.env.A_EMAIL,
-    password: process.env.A_PASSWORD,
+    email: env.A_EMAIL,
+    password: env.A_PASSWORD,
   },
   benLoginNotFound: {
     email: 'gisabena@gmail.com',

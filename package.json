@@ -7,9 +7,8 @@
     "createTables": "NODE_ENV=testing node --require babel-core/register --require babel-polyfill ./server/db/createTables.js",
     "test": "NODE_ENV=testing DEBUG=app:* nyc --reporter=text mocha --require babel-core/register --require babel-polyfill ./server/tests/*.test.js --timeout 10000 --exit",
     "start": "node --require babel-core/register --require babel-polyfill ./server/app.js",
-    "server": "DEBUG=app:* nodemon --require babel-core/register --require babel-polyfill ./server/app.js",
-    "client": "npm start --prefix ../client",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "dev": "DEBUG=app:* nodemon --require babel-core/register --require babel-polyfill ./server/app.js",
+    "both": "concurrently \"npm run server\" \"npm run client\"",
     "lint": "eslint server",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
@@ -31,6 +30,7 @@
   "dependencies": {
     "@hapi/joi": "^16.1.8",
     "@sendgrid/mail": "^6.5.5",
+    "axios": "^0.21.0",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-polyfill": "^6.26.0",
