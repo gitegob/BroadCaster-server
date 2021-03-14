@@ -25,7 +25,7 @@ export const checkLogin = async (req, res, next) => {
         next();
       }
     } catch (error) {
-      notifySlack(error);
+      await notifySlack(`Bcrypt compare error: ${error.message}, ${error.stack}`);
       debugError(error);
       sendError(res, 500, 'Server Error');
     }

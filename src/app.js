@@ -2,6 +2,7 @@
 import 'colors';
 import express from 'express';
 import { json, urlencoded } from 'body-parser';
+import helmet from 'helmet';
 import cors from 'cors';
 import morgan from 'morgan';
 import { sendSuccess, sendError } from './helpers/senders';
@@ -13,11 +14,24 @@ import { db } from './db/dbConfig';
 import { debugApp, debugError } from './config/debug';
 import env from './config/env';
 import notifySlack from './config/slack';
+import limiter from './config/limiter';
 
 const app = express();
-const port = process.env.PORT;
+const port = env.PORT;
+const origin = env.NODE_ENV === 'production' ? env.FRONTEND_URL || 'https://broadcaster.netlify.app' : '*';
 
-app.use(cors());
+app.use(helmet());
+if (env.NODE_ENV === 'production') app.use(limiter);
+app.use(cors({
+  origin,
+  methods: 'GET,POST,PATCH,DELETE',
+}));
+app.use((req, res, next) => {
+  if (req.header('x-forwarded-proto') !== 'https' && (env.NODE_ENV === 'production')) {
+    res.redirect(`https://${req.get('host') + req.originalUrl}`);
+  }
+  next();
+});
 app.use(json());
 app.use(
   urlencoded({

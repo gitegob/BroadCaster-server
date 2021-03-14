@@ -14,7 +14,7 @@ describe('App tests', () => {
       .end((_err, res) => {
         res.should.have.status(200);
         res.body.should.have.property('status').eql(200);
-        res.body.should.have.property('message').eql('Welcome to BroadCaster testing mode');
+        res.body.should.have.property('message').eql('Welcome to BroadCaster test mode');
         done();
       });
   });

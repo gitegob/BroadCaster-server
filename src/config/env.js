@@ -13,7 +13,6 @@ const env = {
   G_MAIL: process.env.G_MAIL,
   G_PWD: process.env.G_PWD,
   DATABASE_URL: process.env.DATABASE_URL,
-  DEV_DATABASE_URL: process.env.DEV_DATABASE_URL,
   MOCK_DATABASE_URL: process.env.MOCK_DATABASE_URL,
   CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
   CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
@@ -21,6 +20,7 @@ const env = {
   sendgrid_api_key: process.env.sendgrid_api_key,
   sgrid_api_key: process.env.sgrid_api_key,
   SLACK_TOKEN: process.env.SLACK_TOKEN,
+  PORT: process.env.PORT,
 };
 
 export default env;

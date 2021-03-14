@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS users (
     cell TEXT,
     dp TEXT,
     "allowEmails" BOOLEAN DEFAULT false,
-    "recoveryEmail TEXT
+    "recoveryEmail" TEXT
   );
 CREATE TABLE IF NOT EXISTS records (
     id serial PRIMARY KEY UNIQUE,
@@ -42,7 +42,7 @@ const clearQueries = `
 delete from users;
 delete from records`;
 let connectionString;
-if (env.NODE_ENV === 'testing') connectionString = env.MOCK_DATABASE_URL;
+if (env.NODE_ENV === 'test') connectionString = env.MOCK_DATABASE_URL;
 else connectionString = env.DATABASE_URL;
 
 const db = new Pool({
@@ -52,7 +52,7 @@ try {
   // eslint-disable-next-line no-console
   db.connect(() => debugDb(`Database Connected in ${env.NODE_ENV} mode...`.yellow.bold));
 } catch (error) {
-  notifySlack(error);
+  (async () => notifySlack(`DB connection error: ${error.message}, ${error.stack}`))();
   debugError(error.stack);
 }
 
@@ -61,7 +61,7 @@ const queryDB = async (res, query, values) => {
     const result = values.length ? await db.query(query, values) : await db.query(query);
     return result.rows;
   } catch (error) {
-    notifySlack(error);
+    await notifySlack(`Querying DB error: ${error.message}, ${error.stack}`);
     debugError(error);
     return sendError(res, 500, `DATABASE ERROR: ${error.message}`);
   }
