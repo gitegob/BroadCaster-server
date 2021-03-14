@@ -47,7 +47,9 @@ else connectionString = env.DATABASE_URL;
 
 const db = new Pool({
   connectionString,
-  ssl: env.NODE_ENV === 'production',
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
 try {
   // eslint-disable-next-line no-console
