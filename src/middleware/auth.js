@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import { sendError } from '../helpers/senders';
 import { queryDB } from '../db/dbConfig';
 import env from '../config/env';
+import notifySlack from '../config/slack';
 
 export const auth = async (req, res, next) => {
   const { authorization } = req.headers;
@@ -20,6 +21,7 @@ export const auth = async (req, res, next) => {
       next();
     } else sendError(res, 401, 'Invalid token');
   } catch (error) {
+    await notifySlack(`Token decode error: ${error.message}, ${error.stack}`);
     return sendError(res, 401, 'Invalid token');
   }
 };

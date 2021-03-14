@@ -7,6 +7,7 @@ import {
   uploadFile, feedbackSender, recoveryEmail,
 } from '../helpers/networkers';
 import env from '../config/env';
+import notifySlack from '../config/slack';
 
 export const signUp = async (req, res) => {
   const {
@@ -128,6 +129,7 @@ export const resetPassword = async (req, res) => {
       sendSuccess(res, 200, 'Password successfully changed');
     }
   } catch (error) {
+    await notifySlack(`Reset password error: ${error.message}, ${error.stack}`);
     sendError(res, 500, 'Server error');
   }
 };

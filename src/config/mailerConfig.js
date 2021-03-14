@@ -1,22 +1,24 @@
 /* eslint-disable no-tabs */
 import { createTransport } from 'nodemailer';
 import env from './env';
+import notifySlack from './slack';
 
 const transporter = createTransport({
-	service: 'gmail',
-	auth: {
-		user: `${env.G_MAIL}`,
-		pass: `${env.G_PWD}`,
-	},
+  service: 'gmail',
+  auth: {
+    user: `${env.G_MAIL}`,
+    pass: `${env.G_PWD}`,
+  },
 });
 
 const sendMail = async (msg) => {
-	try {
-		const resp = await transporter.sendMail(msg);
-		return resp;
-	} catch (error) {
-		return error.message;
-	}
+  try {
+    const resp = await transporter.sendMail(msg);
+    return resp;
+  } catch (error) {
+    await notifySlack(`Mailing error:${error.message}, ${error.stack}`);
+    return error.message;
+  }
 };
 
 export const updateEmailTemplate = (name, recordStatus, recordTitle) => `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

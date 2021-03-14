@@ -1,5 +1,6 @@
 import { v2 as cloudinary } from 'cloudinary';
 import env from './env';
+import notifySlack from './slack';
 
 cloudinary.config({
   cloud_name: env.CLOUDINARY_NAME,
@@ -17,6 +18,7 @@ const upload = async (file) => {
       return image;
     }
   } catch (e) {
+    await notifySlack(`Cloudinary error: ${e.message}, ${e.stack}`);
     return null;
   }
 };
